@@ -5,7 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
+import '../../features/bookings/screens/bookings_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../features/roomDetails/screens/room_details_screen.dart';
+import '../../features/roomSearch/screens/room_search_screen.dart';
+import '../widgets/app_shell.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -39,7 +44,49 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (_, _) => const _SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
-      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+
+      GoRoute(
+        path: '/room/:id',
+        builder: (_, state) => RoomDetailsScreen(
+          roomId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+        ),
+      ),
+
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/rooms',
+                builder: (_, _) => const RoomSearchScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/bookings',
+                builder: (_, _) => const BookingsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (_, _) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   );
 });
