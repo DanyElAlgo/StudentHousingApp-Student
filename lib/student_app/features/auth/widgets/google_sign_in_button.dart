@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:student_lib/student_design_system/student_design_system.dart';
+import 'package:housing_design_system/housing_design_system.dart';
 
 import '../providers/auth_providers.dart';
 import 'google_button_stub.dart'

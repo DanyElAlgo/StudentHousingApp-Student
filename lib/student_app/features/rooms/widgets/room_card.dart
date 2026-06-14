@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:student_lib/student_design_system/student_design_system.dart';
+import 'package:housing_design_system/housing_design_system.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../constants/room_status.dart';
