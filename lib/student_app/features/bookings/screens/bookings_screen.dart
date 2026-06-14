@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_lib/student_design_system/student_design_system.dart';
+import 'package:housing_design_system/housing_design_system.dart';
 
 /// Placeholder
 class BookingsScreen extends StatelessWidget {
@@ -15,10 +15,10 @@ class BookingsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.event_note_outlined,
               size: 64,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: AppSpacing.lg),
             Text('Coming soon', style: text.headlineSmall),

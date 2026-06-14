@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:housing_design_system/housing_design_system.dart';
 
 import 'student_app/core/auth/google_auth_service.dart';
 import 'student_app/core/router/app_router.dart';
-import 'student_design_system/student_design_system.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +21,7 @@ class StudentApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Student Housing',
       debugShowCheckedModeBanner: false,
-      theme: appLightTheme,
+      theme: AppTheme.student,
       routerConfig: ref.watch(goRouterProvider),
     );
   }

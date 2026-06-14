@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_lib/student_design_system/student_design_system.dart';
+import 'package:housing_design_system/housing_design_system.dart';
 
 import '../../rooms/constants/room_policies.dart';
 import '../../rooms/repository/models/room_policy.dart';
