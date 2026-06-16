@@ -143,6 +143,7 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> logout() async {
     await _db.clearSession();
+    await _db.clearChatData();
     try {
       await GoogleAuthService.instance.signOut();
     } catch (_) {}
