@@ -6,6 +6,8 @@ import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/bookings/screens/bookings_screen.dart';
+import '../../features/chat/screens/chat_list_screen.dart';
+import '../../features/chat/screens/chat_thread_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/roomDetails/screens/room_details_screen.dart';
@@ -52,6 +54,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
 
+      GoRoute(
+        path: '/chat/:chatId',
+        builder: (_, state) => ChatThreadScreen(
+          chatId: int.tryParse(state.pathParameters['chatId'] ?? '') ?? 0,
+          title: state.extra as String?,
+        ),
+      ),
+
       StatefulShellRoute.indexedStack(
         builder: (_, _, navigationShell) =>
             AppShell(navigationShell: navigationShell),
@@ -59,6 +69,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: '/chat', builder: (_, _) => const ChatListScreen()),
             ],
           ),
           StatefulShellBranch(

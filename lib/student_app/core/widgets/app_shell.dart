@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 
-class AppShell extends StatelessWidget {
+import '../../features/chat/providers/chat_providers.dart';
+
+class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
@@ -14,9 +17,14 @@ class AppShell extends StatelessWidget {
       label: 'Home',
     ),
     AppBottomNavDestination(
+      icon: Icons.chat_bubble_outline,
+      selectedIcon: Icons.chat_bubble,
+      label: 'Chat',
+    ),
+    AppBottomNavDestination(
       icon: Icons.search_outlined,
       selectedIcon: Icons.search,
-      label: 'Rooms',
+      label: 'Search',
     ),
     AppBottomNavDestination(
       icon: Icons.event_note_outlined,
@@ -31,7 +39,9 @@ class AppShell extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(chatSessionProvider);
+
     return AppScaffold(
       safeArea: false,
       body: navigationShell,
