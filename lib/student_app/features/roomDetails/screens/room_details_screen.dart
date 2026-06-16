@@ -7,6 +7,7 @@ import '../../rooms/constants/room_status.dart';
 import '../../rooms/repository/models/room.dart';
 import '../providers/room_details_providers.dart';
 import '../widgets/booking_button.dart';
+import '../widgets/chat_with_owner_button.dart';
 import '../widgets/owner_card.dart';
 import '../widgets/room_image_carousel.dart';
 import '../widgets/room_location_map.dart';
@@ -162,12 +163,23 @@ class _DetailsContent extends StatelessWidget {
       ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(AppSpacing.lg),
-        child: BookingButton(
-          available: available,
-          hasBooking: data.hasBooking,
-          isSubmitting: isSubmitting,
-          onBook: onBook,
-          onCancel: onCancel,
+        child: Row(
+          children: [
+            ChatWithOwnerButton(
+              roomId: room.id,
+              ownerName: room.ownerFullName,
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: BookingButton(
+                available: available,
+                hasBooking: data.hasBooking,
+                isSubmitting: isSubmitting,
+                onBook: onBook,
+                onCancel: onCancel,
+              ),
+            ),
+          ],
         ),
       ),
     );
