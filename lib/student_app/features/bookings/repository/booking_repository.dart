@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
+import 'models/booking_student.dart';
+
 class BookingException implements Exception {
   const BookingException(this.message);
   final String message;
@@ -13,6 +15,17 @@ class BookingRepository {
   BookingRepository(this._dio);
 
   final Dio _dio;
+
+  Future<List<BookingStudent>> getBookings() async {
+    try {
+      final res = await _dio.get('/api/bookings');
+      return _asList(res.data)
+          .map((e) => BookingStudent.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Could not load your bookings.');
+    }
+  }
 
   Future<bool> hasBooking(int roomId) async {
     try {
@@ -37,6 +50,11 @@ class BookingRepository {
     } on DioException catch (e) {
       throw _mapError(e, 'Could not cancel the request.');
     }
+  }
+
+  List<Map> _asList(dynamic data) {
+    if (data is List) return data.whereType<Map>().toList();
+    return const [];
   }
 
   bool _asBool(dynamic data) {
