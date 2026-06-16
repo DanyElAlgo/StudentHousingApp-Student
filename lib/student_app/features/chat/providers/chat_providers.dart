@@ -82,12 +82,24 @@ class ChatCoordinator {
   final Future<String?> Function() resolveUserId;
 
   StreamSubscription<ChatMessage>? _sub;
+  StreamSubscription<void>? _reconnectSub;
   String? _userId;
 
   Future<void> start() async {
     _userId = await resolveUserId();
     _sub = realtime.messages.listen(_onMessage);
+    _reconnectSub = realtime.reconnected.listen((_) => _backfill());
     await realtime.start();
+  }
+
+  Future<void> _backfill() async {
+    await _refreshConversations();
+    final chatId = activeChatId();
+    if (chatId == null) return;
+    try {
+      final page = await repository.fetchMessages(chatId, pageSize: 30);
+      await store.saveMessages(page);
+    } catch (_) {}
   }
 
   Future<void> _onMessage(ChatMessage message) async {
@@ -121,6 +133,7 @@ class ChatCoordinator {
 
   void dispose() {
     _sub?.cancel();
+    _reconnectSub?.cancel();
   }
 }
 
