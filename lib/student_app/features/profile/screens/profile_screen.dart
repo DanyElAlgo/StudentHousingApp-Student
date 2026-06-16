@@ -3,42 +3,123 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 
 import '../../auth/providers/auth_providers.dart';
+import '../providers/profile_providers.dart';
+import '../repository/models/user_profile.dart';
+import '../widgets/profile_edit_form.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_info_view.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextTheme text = Theme.of(context).textTheme;
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  bool _editing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final AsyncValue<UserProfile> profileAsync =
+        ref.watch(userProfileProvider);
+
     return AppScaffold(
       appBar: AppBar(title: const Text('Profile')),
-      padded: true,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        onRefresh: () => ref.refresh(userProfileProvider.future),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.xl,
+            AppSpacing.lg,
+            AppSpacing.xxxl,
+          ),
           children: [
-            Icon(
-              Icons.person_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text('Your profile', style: text.headlineSmall),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Profile details are coming next.',
-              textAlign: TextAlign.center,
-              style: text.bodyMedium?.copyWith(color: AppColors.onSurfaceVariant),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            AppSecondaryButton(
-              label: 'Log out',
-              icon: Icons.logout,
-              onPressed: () =>
-                  ref.read(authControllerProvider.notifier).logout(),
+            ...profileAsync.when(
+              loading: () => const [
+                Padding(
+                  padding: EdgeInsets.only(top: AppSpacing.xxl),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+              error: (err, _) => [
+                _ProfileMessage(
+                  icon: Icons.cloud_off_outlined,
+                  message: '$err',
+                  onRetry: () => ref.invalidate(userProfileProvider),
+                ),
+              ],
+              data: (profile) => [
+                ProfileHeader(profile: profile),
+                const SizedBox(height: AppSpacing.xl),
+                if (_editing)
+                  ProfileEditForm(
+                    profile: profile,
+                    onCancel: () => setState(() => _editing = false),
+                    onSaved: () => setState(() => _editing = false),
+                  )
+                else ...[
+                  ProfileInfoView(profile: profile),
+                  const SizedBox(height: AppSpacing.xl),
+                  AppPrimaryButton(
+                    label: 'Edit profile',
+                    icon: Icons.edit_outlined,
+                    expanded: true,
+                    onPressed: () => setState(() => _editing = true),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppSecondaryButton(
+                    label: 'Log out',
+                    icon: Icons.logout,
+                    expanded: true,
+                    onPressed: () =>
+                        ref.read(authControllerProvider.notifier).logout(),
+                  ),
+                ],
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileMessage extends StatelessWidget {
+  const _ProfileMessage({
+    required this.icon,
+    required this.message,
+    this.onRetry,
+  });
+
+  final IconData icon;
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xxl),
+      child: Column(
+        children: [
+          Icon(icon, size: 48, color: AppColors.onSurfaceVariant),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: text.bodyMedium?.copyWith(color: AppColors.onSurfaceVariant),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            AppSecondaryButton(
+              label: 'Retry',
+              icon: Icons.refresh,
+              onPressed: onRetry,
+            ),
+          ],
+        ],
       ),
     );
   }
