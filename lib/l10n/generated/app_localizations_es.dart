@@ -305,6 +305,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailsChatButton => 'Chat';
 
   @override
+  String get detailsBookingSuccessTitle => 'Habitación reservada';
+
+  @override
   String get detailsBookingSuccess => 'Reserva realizada con éxito.';
 
   @override

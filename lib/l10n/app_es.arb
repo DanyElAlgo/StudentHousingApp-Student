@@ -104,6 +104,7 @@
   "detailsBookingUnavailable": "Reserva no disponible",
   "detailsCancelRequest": "Cancelar solicitud",
   "detailsChatButton": "Chat",
+  "detailsBookingSuccessTitle": "Habitación reservada",
   "detailsBookingSuccess": "Reserva realizada con éxito.",
   "detailsRequestCancelled": "Solicitud cancelada.",
 
