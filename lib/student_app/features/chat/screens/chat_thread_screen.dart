@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../chat_formatters.dart';
 import '../providers/chat_providers.dart';
@@ -96,6 +97,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final messagesAsync = ref.watch(threadMessagesProvider(widget.chatId));
     final String? currentUserId = ref
         .watch(currentUserIdProvider)
@@ -110,7 +112,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     });
 
     return AppScaffold(
-      appBar: AppBar(title: Text(widget.title ?? 'Chat')),
+      appBar: AppBar(title: Text(widget.title ?? l10n.chatThreadTitle)),
       body: Column(
         children: [
           if (!connected) const _ConnectionBanner(),
@@ -134,7 +136,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
           AppMessageComposer(
             controller: _input,
             onSend: _send,
-            hintText: 'Message…',
+            hintText: l10n.chatMessageHint,
             enabled: connected && !_sending,
           ),
         ],
@@ -162,7 +164,7 @@ class _MessageList extends StatelessWidget {
       final text = Theme.of(context).textTheme;
       return Center(
         child: Text(
-          'No messages yet.\nSay hello!',
+          AppLocalizations.of(context).chatNoMessages,
           textAlign: TextAlign.center,
           style: text.bodyMedium?.copyWith(color: AppColors.onSurfaceVariant),
         ),
@@ -212,7 +214,7 @@ class _ConnectionBanner extends StatelessWidget {
       color: colors.surfaceContainerHigh,
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Text(
-        'Reconnecting…',
+        AppLocalizations.of(context).chatReconnecting,
         textAlign: TextAlign.center,
         style: text.labelMedium?.copyWith(color: colors.onSurfaceVariant),
       ),
