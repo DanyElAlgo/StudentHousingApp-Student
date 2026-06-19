@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../constants/profile_options.dart';
 import '../repository/models/user_profile.dart';
 
 class ProfileInfoView extends StatelessWidget {
@@ -10,34 +12,39 @@ class ProfileInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final String gender = profile.gender.trim().isEmpty
+        ? profile.gender
+        : ProfileOptions.genderLabel(l10n, profile.gender);
+
     return AppCard(
       bordered: true,
       child: Column(
         children: [
           _InfoRow(
             icon: Icons.mail_outline,
-            label: 'Email',
+            label: l10n.authEmailLabel,
             value: profile.email,
-            trailing: 'Read-only',
+            trailing: '',
           ),
           _InfoRow(
             icon: Icons.call_outlined,
-            label: 'Phone number',
+            label: l10n.authPhoneLabel,
             value: profile.phoneNumber,
           ),
           _InfoRow(
             icon: Icons.public_outlined,
-            label: 'Nationality',
+            label: l10n.authNationalityLabel,
             value: profile.nationality,
           ),
           _InfoRow(
             icon: Icons.wc_outlined,
-            label: 'Gender',
-            value: profile.gender,
+            label: l10n.authGenderLabel,
+            value: gender,
           ),
           _InfoRow(
             icon: Icons.cake_outlined,
-            label: 'Birthdate',
+            label: l10n.profileBirthdateLabel,
             value: _formatBirthdate(profile),
             isLast: true,
           ),
@@ -95,7 +102,7 @@ class _InfoRow extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  hasValue ? value : 'Not set',
+                  hasValue ? value : AppLocalizations.of(context).commonNotSet,
                   style: text.bodyLarge?.copyWith(
                     color: hasValue
                         ? null
