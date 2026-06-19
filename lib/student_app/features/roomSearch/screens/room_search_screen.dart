@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/responsive_layout.dart';
 import '../../rooms/repository/models/room.dart';
 import '../../rooms/widgets/room_card.dart';
 import '../providers/room_search_providers.dart';
@@ -39,11 +40,9 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
     _max.text = max;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(roomSearchControllerProvider.notifier).applyFilters(
-            name: name,
-            minPrice: min,
-            maxPrice: max,
-          );
+      ref
+          .read(roomSearchControllerProvider.notifier)
+          .applyFilters(name: name, minPrice: min, maxPrice: max);
     });
   }
 
@@ -71,39 +70,41 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
 
     return AppScaffold(
       appBar: AppBar(title: Text(l10n.searchTitle)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.lg,
-          AppSpacing.lg,
-          AppSpacing.xxxl,
+      body: CenteredMaxWidth(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.xxxl,
+          ),
+          children: [
+            AppSearchBar(
+              controller: _name,
+              hintText: l10n.homeSearchHint,
+              onSubmitted: (_) => _runSearch(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            PriceRangeFilter(minController: _min, maxController: _max),
+            const SizedBox(height: AppSpacing.lg),
+            ServiceFilterChips(
+              selectedIds: state.serviceIds,
+              onToggle: controller.toggleService,
+              onClear: controller.clearServices,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SortDropdown(value: state.sort, onChanged: controller.setSort),
+            const SizedBox(height: AppSpacing.lg),
+            AppPrimaryButton(
+              label: l10n.searchButton,
+              icon: Icons.search,
+              expanded: true,
+              onPressed: _runSearch,
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            _Results(results: state.results),
+          ],
         ),
-        children: [
-          AppSearchBar(
-            controller: _name,
-            hintText: l10n.homeSearchHint,
-            onSubmitted: (_) => _runSearch(),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          PriceRangeFilter(minController: _min, maxController: _max),
-          const SizedBox(height: AppSpacing.lg),
-          ServiceFilterChips(
-            selectedIds: state.serviceIds,
-            onToggle: controller.toggleService,
-            onClear: controller.clearServices,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          SortDropdown(value: state.sort, onChanged: controller.setSort),
-          const SizedBox(height: AppSpacing.lg),
-          AppPrimaryButton(
-            label: l10n.searchButton,
-            icon: Icons.search,
-            expanded: true,
-            onPressed: _runSearch,
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          _Results(results: state.results),
-        ],
       ),
     );
   }
@@ -129,7 +130,11 @@ class _Results extends StatelessWidget {
         padding: const EdgeInsets.only(top: AppSpacing.xxl),
         child: Column(
           children: [
-            Icon(Icons.cloud_off_outlined, size: 48, color: colors.onSurfaceVariant),
+            Icon(
+              Icons.cloud_off_outlined,
+              size: 48,
+              color: colors.onSurfaceVariant,
+            ),
             const SizedBox(height: AppSpacing.md),
             Text(
               '$err',
@@ -153,7 +158,9 @@ class _Results extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   l10n.searchNoResults,
-                  style: text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+                  style: text.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -167,10 +174,9 @@ class _Results extends StatelessWidget {
               style: text.titleSmall?.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: AppSpacing.md),
-            for (final room in rooms) ...[
-              RoomCard(room: room),
-              const SizedBox(height: AppSpacing.md),
-            ],
+            ResponsiveCardGrid(
+              children: [for (final room in rooms) RoomCard(room: room)],
+            ),
           ],
         );
       },
