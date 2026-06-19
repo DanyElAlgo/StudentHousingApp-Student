@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/responsive_layout.dart';
 import '../../rooms/providers/room_providers.dart';
 import '../../rooms/repository/models/room.dart';
 import '../../rooms/widgets/room_card.dart';
@@ -19,56 +20,57 @@ class HomeScreen extends ConsumerWidget {
 
     return AppScaffold(
       appBar: AppBar(title: Text(l10n.appTitle)),
-      body: RefreshIndicator(
-        onRefresh: () => ref.refresh(featuredRoomsProvider.future),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.xxxl,
-          ),
-          children: [
-            const HomeHeader(),
-            const SizedBox(height: AppSpacing.xl),
-            AppSectionHeader(
-              title: l10n.homeFeaturedRooms,
-              actionLabel: l10n.homeShowMore,
-              onActionPressed: () => context.go('/rooms'),
+      body: CenteredMaxWidth(
+        child: RefreshIndicator(
+          onRefresh: () => ref.refresh(featuredRoomsProvider.future),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.xxxl,
             ),
-            const SizedBox(height: AppSpacing.sm),
-            ...rooms.when(
-              loading: () => const [
-                Padding(
-                  padding: EdgeInsets.only(top: AppSpacing.xxl),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-              error: (err, _) => [
-                _HomeMessage(
-                  icon: Icons.cloud_off_outlined,
-                  message: '$err',
-                  onRetry: () => ref.invalidate(featuredRoomsProvider),
-                ),
-              ],
-              data: (list) {
-                if (list.isEmpty) {
+            children: [
+              const HomeHeader(),
+              const SizedBox(height: AppSpacing.xl),
+              AppSectionHeader(
+                title: l10n.homeFeaturedRooms,
+                actionLabel: l10n.homeShowMore,
+                onActionPressed: () => context.go('/rooms'),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              ...rooms.when(
+                loading: () => const [
+                  Padding(
+                    padding: EdgeInsets.only(top: AppSpacing.xxl),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+                error: (err, _) => [
+                  _HomeMessage(
+                    icon: Icons.cloud_off_outlined,
+                    message: '$err',
+                    onRetry: () => ref.invalidate(featuredRoomsProvider),
+                  ),
+                ],
+                data: (list) {
+                  if (list.isEmpty) {
+                    return [
+                      _HomeMessage(
+                        icon: Icons.meeting_room_outlined,
+                        message: l10n.homeNoRooms,
+                      ),
+                    ];
+                  }
                   return [
-                    _HomeMessage(
-                      icon: Icons.meeting_room_outlined,
-                      message: l10n.homeNoRooms,
+                    ResponsiveCardGrid(
+                      children: [for (final room in list) RoomCard(room: room)],
                     ),
                   ];
-                }
-                return [
-                  for (final room in list) ...[
-                    RoomCard(room: room),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
-                ];
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

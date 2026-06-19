@@ -4,6 +4,7 @@ import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../../core/utils/formatters.dart';
+import '../../../core/widgets/responsive_layout.dart';
 import '../../rooms/constants/room_status.dart';
 import '../../rooms/repository/models/room.dart';
 import '../providers/room_details_providers.dart';
@@ -103,6 +104,114 @@ class _DetailsContent extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final bool available = RoomStatus.isAvailable(room.roomStatus);
 
+    final Widget header = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: Text(room.name, style: text.titleLarge)),
+            const SizedBox(width: AppSpacing.md),
+            Text(
+              formatPrice(room.price),
+              style: text.titleMedium?.copyWith(color: colors.primary),
+            ),
+          ],
+        ),
+        Text(
+          l10n.detailsPerMonth,
+          style: text.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+        ),
+        if (!available) ...[
+          const SizedBox(height: AppSpacing.sm),
+          AppChip(
+            label: RoomStatus.label(context, room.roomStatus),
+            icon: Icons.do_not_disturb_on_outlined,
+          ),
+        ],
+      ],
+    );
+
+    final Widget actions = Row(
+      children: [
+        ChatWithOwnerButton(roomId: room.id, ownerName: room.ownerFullName),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: BookingButton(
+            available: available,
+            hasBooking: data.hasBooking,
+            isSubmitting: isSubmitting,
+            onBook: onBook,
+            onCancel: onCancel,
+          ),
+        ),
+      ],
+    );
+
+    final List<Widget> sections = [
+      _Section(
+        title: l10n.detailsDescription,
+        child: Text(
+          room.description.isEmpty
+              ? l10n.detailsNoDescription
+              : room.description,
+          style: text.bodyMedium,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.lg),
+      RoomServicesSection(services: room.services),
+      const SizedBox(height: AppSpacing.lg),
+      RoomPoliciesSection(policies: room.policies),
+      const SizedBox(height: AppSpacing.lg),
+      AppSectionHeader(title: l10n.detailsLocation),
+      const SizedBox(height: AppSpacing.sm),
+      RoomLocationMap(latitude: room.latitude, longitude: room.longitude),
+      const SizedBox(height: AppSpacing.lg),
+      OwnerCard(room: room),
+    ];
+
+    if (!Breakpoints.isCompact(context)) {
+      return AppScaffold(
+        appBar: AppBar(title: Text(room.name)),
+        body: CenteredMaxWidth(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 360,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RoomImageCarousel(imageUrls: room.imageRoomUrls),
+                      Padding(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            header,
+                            const SizedBox(height: AppSpacing.lg),
+                            actions,
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  children: sections,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return AppScaffold(
       appBar: AppBar(title: Text(room.name)),
       body: ListView(
@@ -114,52 +223,9 @@ class _DetailsContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: Text(room.name, style: text.titleLarge)),
-                    const SizedBox(width: AppSpacing.md),
-                    Text(
-                      formatPrice(room.price),
-                      style: text.titleMedium?.copyWith(color: colors.primary),
-                    ),
-                  ],
-                ),
-                Text(
-                  l10n.detailsPerMonth,
-                  style:
-                      text.bodySmall?.copyWith(color: colors.onSurfaceVariant),
-                ),
-                if (!available) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  AppChip(
-                    label: RoomStatus.label(context, room.roomStatus),
-                    icon: Icons.do_not_disturb_on_outlined,
-                  ),
-                ],
+                header,
                 const SizedBox(height: AppSpacing.lg),
-                _Section(
-                  title: l10n.detailsDescription,
-                  child: Text(
-                    room.description.isEmpty
-                        ? l10n.detailsNoDescription
-                        : room.description,
-                    style: text.bodyMedium,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                RoomServicesSection(services: room.services),
-                const SizedBox(height: AppSpacing.lg),
-                RoomPoliciesSection(policies: room.policies),
-                const SizedBox(height: AppSpacing.lg),
-                AppSectionHeader(title: l10n.detailsLocation),
-                const SizedBox(height: AppSpacing.sm),
-                RoomLocationMap(
-                  latitude: room.latitude,
-                  longitude: room.longitude,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                OwnerCard(room: room),
+                ...sections,
               ],
             ),
           ),
@@ -167,24 +233,7 @@ class _DetailsContent extends StatelessWidget {
       ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(AppSpacing.lg),
-        child: Row(
-          children: [
-            ChatWithOwnerButton(
-              roomId: room.id,
-              ownerName: room.ownerFullName,
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: BookingButton(
-                available: available,
-                hasBooking: data.hasBooking,
-                isSubmitting: isSubmitting,
-                onBook: onBook,
-                onCancel: onCancel,
-              ),
-            ),
-          ],
-        ),
+        child: actions,
       ),
     );
   }
