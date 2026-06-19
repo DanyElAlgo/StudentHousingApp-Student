@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../rooms/providers/room_providers.dart';
 import '../../rooms/repository/models/room.dart';
@@ -13,10 +14,11 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final AsyncValue<List<Room>> rooms = ref.watch(featuredRoomsProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Student Housing')),
+      appBar: AppBar(title: Text(l10n.appTitle)),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(featuredRoomsProvider.future),
         child: ListView(
@@ -30,8 +32,8 @@ class HomeScreen extends ConsumerWidget {
             const HomeHeader(),
             const SizedBox(height: AppSpacing.xl),
             AppSectionHeader(
-              title: 'Featured rooms',
-              actionLabel: 'Show more',
+              title: l10n.homeFeaturedRooms,
+              actionLabel: l10n.homeShowMore,
               onActionPressed: () => context.go('/rooms'),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -51,10 +53,10 @@ class HomeScreen extends ConsumerWidget {
               ],
               data: (list) {
                 if (list.isEmpty) {
-                  return const [
+                  return [
                     _HomeMessage(
                       icon: Icons.meeting_room_outlined,
-                      message: 'No rooms available right now.',
+                      message: l10n.homeNoRooms,
                     ),
                   ];
                 }
@@ -97,7 +99,7 @@ class _HomeMessage extends StatelessWidget {
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.lg),
             AppSecondaryButton(
-              label: 'Retry',
+              label: AppLocalizations.of(context).commonRetry,
               icon: Icons.refresh,
               onPressed: onRetry,
             ),
