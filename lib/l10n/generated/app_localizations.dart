@@ -670,6 +670,12 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get detailsChatButton;
 
+  /// No description provided for @detailsBookingSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Room booked'**
+  String get detailsBookingSuccessTitle;
+
   /// No description provided for @detailsBookingSuccess.
   ///
   /// In en, this message translates to:

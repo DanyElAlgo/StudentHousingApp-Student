@@ -109,6 +109,7 @@
   "detailsBookingUnavailable": "Booking unavailable",
   "detailsCancelRequest": "Cancel request",
   "detailsChatButton": "Chat",
+  "detailsBookingSuccessTitle": "Room booked",
   "detailsBookingSuccess": "Booking made successfully.",
   "detailsRequestCancelled": "Request cancelled.",
 
