@@ -16,6 +16,7 @@ import '../widgets/room_image_carousel.dart';
 import '../widgets/room_location_map.dart';
 import '../widgets/room_policies_section.dart';
 import '../widgets/room_services_section.dart';
+import '../widgets/share_room_button.dart';
 
 class RoomDetailsScreen extends ConsumerWidget {
   const RoomDetailsScreen({super.key, required this.roomId});
@@ -142,18 +143,28 @@ class _DetailsContent extends StatelessWidget {
       ],
     );
 
-    final Widget actions = Row(
+    final Widget actions = Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ChatWithOwnerButton(roomId: room.id, ownerName: room.ownerFullName),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: BookingButton(
-            available: available,
-            hasBooking: data.hasBooking,
-            isSubmitting: isSubmitting,
-            onBook: onBook,
-            onCancel: onCancel,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: ChatWithOwnerButton(
+                roomId: room.id,
+                ownerName: room.ownerFullName,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(child: ShareRoomButton(room: room)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        BookingButton(
+          available: available,
+          hasBooking: data.hasBooking,
+          isSubmitting: isSubmitting,
+          onBook: onBook,
+          onCancel: onCancel,
         ),
       ],
     );

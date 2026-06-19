@@ -109,6 +109,14 @@
   "detailsBookingUnavailable": "Booking unavailable",
   "detailsCancelRequest": "Cancel request",
   "detailsChatButton": "Chat",
+  "detailsShareButton": "Share",
+  "detailsShareMessage": "Check out \"{roomName}\" on Student Lib: {url}",
+  "@detailsShareMessage": {
+    "placeholders": {
+      "roomName": { "type": "String" },
+      "url": { "type": "String" }
+    }
+  },
   "detailsBookingSuccessTitle": "Room booked",
   "detailsBookingSuccess": "Booking made successfully.",
   "detailsRequestCancelled": "Request cancelled.",

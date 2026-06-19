@@ -104,6 +104,14 @@
   "detailsBookingUnavailable": "Reserva indisponível",
   "detailsCancelRequest": "Cancelar solicitação",
   "detailsChatButton": "Chat",
+  "detailsShareButton": "Compartilhar",
+  "detailsShareMessage": "Confira \"{roomName}\" no Student Lib: {url}",
+  "@detailsShareMessage": {
+    "placeholders": {
+      "roomName": { "type": "String" },
+      "url": { "type": "String" }
+    }
+  },
   "detailsBookingSuccessTitle": "Quarto reservado",
   "detailsBookingSuccess": "Reserva realizada com sucesso.",
   "detailsRequestCancelled": "Solicitação cancelada.",
