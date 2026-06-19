@@ -44,15 +44,48 @@ class AppShell extends ConsumerWidget {
       ),
     ];
 
-    return AppScaffold(
-      safeArea: false,
-      body: navigationShell,
-      bottomNavigationBar: AppBottomNavBar(
-        destinations: destinations,
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => navigationShell.goBranch(
-          index,
-          initialLocation: index == navigationShell.currentIndex,
+    void onSelected(int index) => navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
+
+    if (Breakpoints.isCompact(context)) {
+      return AppScaffold(
+        safeArea: false,
+        body: navigationShell,
+        bottomNavigationBar: AppBottomNavBar(
+          destinations: destinations,
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: onSelected,
+        ),
+      );
+    }
+
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    return Scaffold(
+      backgroundColor: colors.surface,
+      body: SafeArea(
+        child: Row(
+          children: [
+            NavigationRail(
+              backgroundColor: colors.surface,
+              labelType: NavigationRailLabelType.all,
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: onSelected,
+              destinations: [
+                for (final AppBottomNavDestination d in destinations)
+                  NavigationRailDestination(
+                    icon: Icon(d.icon),
+                    selectedIcon: d.selectedIcon == null
+                        ? null
+                        : Icon(d.selectedIcon),
+                    label: Text(d.label),
+                  ),
+              ],
+            ),
+            const VerticalDivider(width: 1),
+            Expanded(child: navigationShell),
+          ],
         ),
       ),
     );
