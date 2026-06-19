@@ -37,7 +37,17 @@ class CachedMessages extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [AuthTokens, CachedConversations, CachedMessages])
+class AppSettings extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  TextColumn get languageCode => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DriftDatabase(
+  tables: [AuthTokens, CachedConversations, CachedMessages, AppSettings],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
     : super(
@@ -53,7 +63,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forExecutor(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -63,10 +73,14 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(cachedConversations);
         await m.createTable(cachedMessages);
       }
+      if (from < 3) {
+        await m.createTable(appSettings);
+      }
     },
   );
 
   static const int _sessionRowId = 0;
+  static const int _settingsRowId = 0;
 
   Future<({String access, String refresh})?> readSession() async {
     final row = await (select(
@@ -87,6 +101,22 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> clearSession() => delete(authTokens).go();
+
+  Future<String?> readLanguageCode() async {
+    final row = await (select(
+      appSettings,
+    )..where((t) => t.id.equals(_settingsRowId))).getSingleOrNull();
+    return row?.languageCode;
+  }
+
+  Future<void> saveLanguageCode(String code) {
+    return into(appSettings).insertOnConflictUpdate(
+      AppSettingsCompanion.insert(
+        id: const Value(_settingsRowId),
+        languageCode: Value(code),
+      ),
+    );
+  }
 
   Stream<List<CachedConversation>> watchCachedConversations() {
     return (select(cachedConversations)..orderBy([
