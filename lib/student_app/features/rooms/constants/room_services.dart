@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 class RoomServiceOption {
   const RoomServiceOption({
@@ -53,3 +54,28 @@ IconData iconForService(String service) =>
 
 String labelForService(String service) =>
     resolveRoomService(service)?.label ?? service;
+
+String localizedServiceOptionLabel(
+  AppLocalizations l10n,
+  RoomServiceOption option,
+) {
+  switch (option.id) {
+    case 1:
+      return l10n.serviceWifi;
+    case 2:
+      return l10n.serviceKitchen;
+    case 3:
+      return l10n.serviceTv;
+    case 4:
+      return l10n.serviceAirConditioner;
+    case 5:
+      return l10n.serviceGymEquipment;
+    default:
+      return option.label;
+  }
+}
+
+String localizedLabelForService(AppLocalizations l10n, String service) {
+  final RoomServiceOption? option = resolveRoomService(service);
+  return option == null ? service : localizedServiceOptionLabel(l10n, option);
+}

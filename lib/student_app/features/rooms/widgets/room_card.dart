@@ -32,7 +32,7 @@ class RoomCard extends StatelessWidget {
       overlay: available
           ? null
           : AppChip(
-              label: room.roomStatus,
+              label: RoomStatus.label(context, room.roomStatus),
               color: colors.inverseSurface.withValues(alpha: 0.85),
               foregroundColor: colors.onInverseSurface,
             ),
