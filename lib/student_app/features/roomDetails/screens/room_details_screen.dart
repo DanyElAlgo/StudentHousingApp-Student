@@ -4,6 +4,7 @@ import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../../core/utils/formatters.dart';
+import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../rooms/constants/room_status.dart';
 import '../../rooms/repository/models/room.dart';
@@ -25,8 +26,17 @@ class RoomDetailsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final error = await ref.read(bookingActionProvider.notifier).book(roomId);
-    messenger.showSnackBar(
-      SnackBar(content: Text(error ?? l10n.detailsBookingSuccess)),
+    if (error != null) {
+      messenger.showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    if (!context.mounted) return;
+    await showAppFeedback(
+      context,
+      kind: FeedbackKind.success,
+      title: l10n.detailsBookingSuccessTitle,
+      message: l10n.detailsBookingSuccess,
+      actionLabel: l10n.commonOk,
     );
   }
 

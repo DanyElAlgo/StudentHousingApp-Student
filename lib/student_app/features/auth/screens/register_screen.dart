@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/app_feedback.dart';
 import '../providers/auth_providers.dart';
 import '../repository/models/register_dto.dart';
 import '../widgets/auth_validators.dart';
@@ -97,18 +98,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final created = await ref.read(authControllerProvider.notifier).register(dto);
     if (!created || !mounted) return;
 
-    await showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.authAccountCreatedTitle),
-        content: Text(l10n.authAccountCreatedBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.commonOk),
-          ),
-        ],
-      ),
+    await showAppFeedback(
+      context,
+      kind: FeedbackKind.success,
+      title: l10n.authAccountCreatedTitle,
+      message: l10n.authAccountCreatedBody,
+      actionLabel: l10n.commonOk,
     );
     if (mounted) context.go('/login');
   }

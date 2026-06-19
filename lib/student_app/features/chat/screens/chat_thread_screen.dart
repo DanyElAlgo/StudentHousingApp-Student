@@ -209,14 +209,33 @@ class _ConnectionBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final TextTheme text = Theme.of(context).textTheme;
-    return Container(
-      width: double.infinity,
-      color: colors.surfaceContainerHigh,
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Text(
-        AppLocalizations.of(context).chatReconnecting,
-        textAlign: TextAlign.center,
-        style: text.labelMedium?.copyWith(color: colors.onSurfaceVariant),
+    return Material(
+      color: colors.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.wifi_off_rounded,
+              size: 18,
+              color: colors.onErrorContainer,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Flexible(
+              child: Text(
+                AppLocalizations.of(context).chatReconnecting,
+                textAlign: TextAlign.center,
+                style: text.labelMedium?.copyWith(
+                  color: colors.onErrorContainer,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
