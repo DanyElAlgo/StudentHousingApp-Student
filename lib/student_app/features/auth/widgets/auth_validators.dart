@@ -1,41 +1,45 @@
+import 'package:student_lib/l10n/generated/app_localizations.dart';
+
 abstract final class AuthValidators {
   AuthValidators._();
 
   static final RegExp _email = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
   static final RegExp _phone = RegExp(r'^\d{7,15}$');
 
-  static String? email(String? value) {
+  static String? email(String? value, AppLocalizations l10n) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'Enter your email';
-    if (!_email.hasMatch(v)) return 'Enter a valid email';
+    if (v.isEmpty) return l10n.authValidatorEmailRequired;
+    if (!_email.hasMatch(v)) return l10n.authValidatorEmailInvalid;
     return null;
   }
 
-  static String? required(String? value, String field) {
-    if (value == null || value.trim().isEmpty) return 'Enter your $field';
+  static String? requiredField(String? value, String message) {
+    if (value == null || value.trim().isEmpty) return message;
     return null;
   }
 
-  static String? phone(String? value) {
+  static String? phone(String? value, AppLocalizations l10n) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'Enter your phone number';
-    if (!_phone.hasMatch(v)) return 'Use 7–15 digits';
+    if (v.isEmpty) return l10n.authValidatorPhoneRequired;
+    if (!_phone.hasMatch(v)) return l10n.authValidatorPhoneInvalid;
     return null;
   }
 
-  static String? password(String? value) {
+  static String? password(String? value, AppLocalizations l10n) {
     final v = value ?? '';
-    if (v.isEmpty) return 'Enter a password';
-    if (v.length < 8) return 'At least 8 characters';
-    if (!RegExp(r'[A-Z]').hasMatch(v)) return 'Add an uppercase letter';
-    if (!RegExp(r'[a-z]').hasMatch(v)) return 'Add a lowercase letter';
-    if (!RegExp(r'\d').hasMatch(v)) return 'Add a number';
-    if (!RegExp(r'[^A-Za-z0-9]').hasMatch(v)) return 'Add a special character';
+    if (v.isEmpty) return l10n.authValidatorPasswordRequired;
+    if (v.length < 8) return l10n.authValidatorPasswordMinLength;
+    if (!RegExp(r'[A-Z]').hasMatch(v)) return l10n.authValidatorPasswordUppercase;
+    if (!RegExp(r'[a-z]').hasMatch(v)) return l10n.authValidatorPasswordLowercase;
+    if (!RegExp(r'\d').hasMatch(v)) return l10n.authValidatorPasswordNumber;
+    if (!RegExp(r'[^A-Za-z0-9]').hasMatch(v)) {
+      return l10n.authValidatorPasswordSpecial;
+    }
     return null;
   }
 
-  static String? loginPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Enter your password';
+  static String? loginPassword(String? value, AppLocalizations l10n) {
+    if (value == null || value.isEmpty) return l10n.authValidatorLoginPasswordRequired;
     return null;
   }
 }
