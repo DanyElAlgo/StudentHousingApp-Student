@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../providers/auth_providers.dart';
 import 'google_button_stub.dart'
@@ -19,7 +20,7 @@ class GoogleSignInButton extends ConsumerWidget {
 
     final isBusy = ref.watch(authControllerProvider.select((s) => s.isBusy));
     return AppSecondaryButton(
-      label: 'Continue with Google',
+      label: AppLocalizations.of(context).authContinueWithGoogle,
       icon: Icons.g_mobiledata,
       expanded: true,
       onPressed: isBusy

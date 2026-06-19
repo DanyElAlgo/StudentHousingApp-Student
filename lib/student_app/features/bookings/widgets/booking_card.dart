@@ -30,7 +30,7 @@ class BookingCard extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.md),
           AppStatusBadge(
-            label: booking.bookingStatus,
+            label: BookingStatus.label(context, booking.bookingStatus),
             icon: style.icon,
             foregroundColor: style.foreground,
             backgroundColor: style.background,

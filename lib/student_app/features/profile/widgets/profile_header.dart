@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../repository/models/user_profile.dart';
 
@@ -26,7 +27,9 @@ class ProfileHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          profile.fullName.isEmpty ? 'Your profile' : profile.fullName,
+          profile.fullName.isEmpty
+              ? AppLocalizations.of(context).profileYourProfile
+              : profile.fullName,
           textAlign: TextAlign.center,
           style: text.headlineSmall,
         ),

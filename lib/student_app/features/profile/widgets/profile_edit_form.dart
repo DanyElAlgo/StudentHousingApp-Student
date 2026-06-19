@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../constants/profile_options.dart';
 import '../providers/profile_providers.dart';
@@ -55,6 +56,7 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
   }
 
   Future<void> _submit() async {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final payload = UpdateUserPayload(
@@ -73,7 +75,7 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
     final messenger = ScaffoldMessenger.of(context);
     if (error == null) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Profile updated.')),
+        SnackBar(content: Text(l10n.profileUpdated)),
       );
       widget.onSaved();
     } else {
@@ -90,6 +92,7 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final bool isSaving = ref.watch(profileEditControllerProvider);
     final DateTime now = DateTime.now();
 
@@ -100,7 +103,7 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
           children: [
             Expanded(
               child: AppSecondaryButton(
-                label: 'Cancel',
+                label: l10n.commonCancel,
                 expanded: true,
                 onPressed: isSaving ? null : widget.onCancel,
               ),
@@ -108,7 +111,7 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: AppPrimaryButton(
-                label: 'Save changes',
+                label: l10n.profileSaveChanges,
                 expanded: true,
                 isLoading: isSaving,
                 onPressed: _submit,
@@ -119,48 +122,48 @@ class _ProfileEditFormState extends ConsumerState<ProfileEditForm> {
         children: [
           AppTextField(
             controller: _firstName,
-            label: 'First name',
+            label: l10n.authFirstNameLabel,
             hintText: 'Jane',
             prefixIcon: Icons.person_outline,
             textInputAction: TextInputAction.next,
             validator: (value) => (value == null || value.trim().isEmpty)
-                ? 'First name is required.'
+                ? l10n.profileFirstNameRequired
                 : null,
           ),
           AppTextField(
             controller: _lastName,
-            label: 'Last name',
+            label: l10n.authLastNameLabel,
             hintText: 'Doe',
             prefixIcon: Icons.person_outline,
             textInputAction: TextInputAction.next,
           ),
           AppTextField(
             controller: _phone,
-            label: 'Phone number',
+            label: l10n.authPhoneLabel,
             hintText: '+591 70000000',
             prefixIcon: Icons.call_outlined,
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.next,
           ),
           AppDropdownField<String>(
-            label: 'Nationality',
-            hintText: 'Select your nationality',
+            label: l10n.authNationalityLabel,
+            hintText: l10n.profileSelectNationality,
             prefixIcon: Icons.public_outlined,
             value: _nationality,
             items: ProfileOptions.nationalitiesWith(_nationality),
             onChanged: (value) => setState(() => _nationality = value),
           ),
           AppDropdownField<String>(
-            label: 'Gender',
-            hintText: 'Select your gender',
+            label: l10n.authGenderLabel,
+            hintText: l10n.authSelectGender,
             prefixIcon: Icons.wc_outlined,
             value: _gender,
-            items: ProfileOptions.gendersWith(_gender),
+            items: ProfileOptions.localizedGenders(l10n, _gender),
             onChanged: (value) => setState(() => _gender = value),
           ),
           AppDateField(
-            label: 'Birthdate',
-            hintText: 'Select your birthdate',
+            label: l10n.profileBirthdateLabel,
+            hintText: l10n.authSelectBirthDate,
             value: _birthdate,
             firstDate: DateTime(now.year - 120),
             lastDate: now,

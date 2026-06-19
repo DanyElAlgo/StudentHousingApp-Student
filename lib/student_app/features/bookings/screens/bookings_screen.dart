@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../providers/booking_providers.dart';
 import '../repository/models/booking_student.dart';
@@ -11,11 +12,12 @@ class BookingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final AsyncValue<List<BookingStudent>> bookings =
         ref.watch(studentBookingsProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('My bookings')),
+      appBar: AppBar(title: Text(l10n.bookingsTitle)),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(studentBookingsProvider.future),
         child: ListView(
@@ -42,10 +44,10 @@ class BookingsScreen extends ConsumerWidget {
               ],
               data: (list) {
                 if (list.isEmpty) {
-                  return const [
+                  return [
                     _BookingsMessage(
                       icon: Icons.event_note_outlined,
-                      message: 'You have no bookings yet.',
+                      message: l10n.bookingsEmpty,
                     ),
                   ];
                 }
@@ -94,7 +96,7 @@ class _BookingsMessage extends StatelessWidget {
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.lg),
             AppSecondaryButton(
-              label: 'Retry',
+              label: AppLocalizations.of(context).commonRetry,
               icon: Icons.refresh,
               onPressed: onRetry,
             ),

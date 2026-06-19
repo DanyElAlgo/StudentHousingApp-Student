@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../auth/providers/auth_providers.dart';
 import '../providers/profile_providers.dart';
 import '../repository/models/user_profile.dart';
+import '../widgets/language_selector.dart';
 import '../widgets/profile_edit_form.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_info_view.dart';
@@ -21,11 +23,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final AsyncValue<UserProfile> profileAsync =
         ref.watch(userProfileProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(l10n.profileTitle)),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(userProfileProvider.future),
         child: ListView(
@@ -61,16 +64,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   )
                 else ...[
                   ProfileInfoView(profile: profile),
+                  const SizedBox(height: AppSpacing.lg),
+                  const LanguageSelector(),
                   const SizedBox(height: AppSpacing.xl),
                   AppPrimaryButton(
-                    label: 'Edit profile',
+                    label: l10n.profileEditButton,
                     icon: Icons.edit_outlined,
                     expanded: true,
                     onPressed: () => setState(() => _editing = true),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppSecondaryButton(
-                    label: 'Log out',
+                    label: l10n.profileLogout,
                     icon: Icons.logout,
                     expanded: true,
                     onPressed: () =>
@@ -114,7 +119,7 @@ class _ProfileMessage extends StatelessWidget {
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.lg),
             AppSecondaryButton(
-              label: 'Retry',
+              label: AppLocalizations.of(context).commonRetry,
               icon: Icons.refresh,
               onPressed: onRetry,
             ),

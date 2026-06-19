@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../rooms/repository/models/room.dart';
 import '../../rooms/widgets/room_card.dart';
@@ -64,11 +65,12 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final state = ref.watch(roomSearchControllerProvider);
     final controller = ref.read(roomSearchControllerProvider.notifier);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Find a room')),
+      appBar: AppBar(title: Text(l10n.searchTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.lg,
@@ -79,7 +81,7 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
         children: [
           AppSearchBar(
             controller: _name,
-            hintText: 'Search rooms by name',
+            hintText: l10n.homeSearchHint,
             onSubmitted: (_) => _runSearch(),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -94,7 +96,7 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
           SortDropdown(value: state.sort, onChanged: controller.setSort),
           const SizedBox(height: AppSpacing.lg),
           AppPrimaryButton(
-            label: 'Search',
+            label: l10n.searchButton,
             icon: Icons.search,
             expanded: true,
             onPressed: _runSearch,
@@ -114,6 +116,7 @@ class _Results extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final TextTheme text = Theme.of(context).textTheme;
     final ColorScheme colors = Theme.of(context).colorScheme;
 
@@ -149,7 +152,7 @@ class _Results extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'No rooms match your filters.',
+                  l10n.searchNoResults,
                   style: text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
@@ -160,7 +163,7 @@ class _Results extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              rooms.length == 1 ? '1 room found' : '${rooms.length} rooms found',
+              l10n.searchResultsCount(rooms.length),
               style: text.titleSmall?.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: AppSpacing.md),

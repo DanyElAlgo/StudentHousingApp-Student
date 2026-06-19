@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../rooms/constants/room_status.dart';
@@ -20,18 +21,20 @@ class RoomDetailsScreen extends ConsumerWidget {
   final int roomId;
 
   Future<void> _book(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final error = await ref.read(bookingActionProvider.notifier).book(roomId);
     messenger.showSnackBar(
-      SnackBar(content: Text(error ?? 'Booking made successfully.')),
+      SnackBar(content: Text(error ?? l10n.detailsBookingSuccess)),
     );
   }
 
   Future<void> _cancel(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final error = await ref.read(bookingActionProvider.notifier).cancel(roomId);
     messenger.showSnackBar(
-      SnackBar(content: Text(error ?? 'Request cancelled.')),
+      SnackBar(content: Text(error ?? l10n.detailsRequestCancelled)),
     );
   }
 
@@ -61,7 +64,7 @@ class RoomDetailsScreen extends ConsumerWidget {
               Text('$err', textAlign: TextAlign.center),
               const SizedBox(height: AppSpacing.lg),
               AppSecondaryButton(
-                label: 'Retry',
+                label: AppLocalizations.of(context).commonRetry,
                 icon: Icons.refresh,
                 onPressed: () => ref.invalidate(roomDetailsProvider(roomId)),
               ),
@@ -94,6 +97,7 @@ class _DetailsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final Room room = data.room;
     final TextTheme text = Theme.of(context).textTheme;
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -122,23 +126,23 @@ class _DetailsContent extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  '/ month',
+                  l10n.detailsPerMonth,
                   style:
                       text.bodySmall?.copyWith(color: colors.onSurfaceVariant),
                 ),
                 if (!available) ...[
                   const SizedBox(height: AppSpacing.sm),
                   AppChip(
-                    label: room.roomStatus,
+                    label: RoomStatus.label(context, room.roomStatus),
                     icon: Icons.do_not_disturb_on_outlined,
                   ),
                 ],
                 const SizedBox(height: AppSpacing.lg),
                 _Section(
-                  title: 'Description',
+                  title: l10n.detailsDescription,
                   child: Text(
                     room.description.isEmpty
-                        ? 'No description provided.'
+                        ? l10n.detailsNoDescription
                         : room.description,
                     style: text.bodyMedium,
                   ),
@@ -148,7 +152,7 @@ class _DetailsContent extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 RoomPoliciesSection(policies: room.policies),
                 const SizedBox(height: AppSpacing.lg),
-                const AppSectionHeader(title: 'Location'),
+                AppSectionHeader(title: l10n.detailsLocation),
                 const SizedBox(height: AppSpacing.sm),
                 RoomLocationMap(
                   latitude: room.latitude,

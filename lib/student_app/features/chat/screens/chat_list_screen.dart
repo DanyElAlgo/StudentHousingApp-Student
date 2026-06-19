@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../chat_formatters.dart';
 import '../providers/chat_providers.dart';
@@ -12,10 +13,11 @@ class ChatListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final AsyncValue<List<ChatSummary>> chats = ref.watch(conversationsProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Chats')),
+      appBar: AppBar(title: Text(l10n.chatsTitle)),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(conversationsProvider),
         child: chats.when(
@@ -27,10 +29,9 @@ class ChatListScreen extends ConsumerWidget {
           ),
           data: (list) {
             if (list.isEmpty) {
-              return const _ChatListMessage(
+              return _ChatListMessage(
                 icon: Icons.forum_outlined,
-                message:
-                    'No chats yet.\nStart one from a room to contact its owner.',
+                message: l10n.chatEmpty,
               );
             }
             return ListView.separated(
@@ -43,7 +44,10 @@ class ChatListScreen extends ConsumerWidget {
                 return AppChatListTile(
                   title: chat.otherParticipantName,
                   subtitle: chat.lastMessage,
-                  timeLabel: formatConversationTimestamp(chat.lastMessageAt),
+                  timeLabel: formatConversationTimestamp(
+                    l10n,
+                    chat.lastMessageAt,
+                  ),
                   unreadCount: chat.unreadCount,
                   onTap: () => context.push(
                     '/chat/${chat.chatId}',
@@ -92,7 +96,7 @@ class _ChatListMessage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 Center(
                   child: AppSecondaryButton(
-                    label: 'Retry',
+                    label: AppLocalizations.of(context).commonRetry,
                     icon: Icons.refresh,
                     onPressed: onRetry,
                   ),
