@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../rooms/repository/models/room.dart';
@@ -11,6 +12,7 @@ class OwnerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final TextTheme text = Theme.of(context).textTheme;
     final ColorScheme colors = Theme.of(context).colorScheme;
     final bool hasAvatar = room.imageUrl.trim().isNotEmpty;
@@ -34,13 +36,15 @@ class OwnerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Property owner',
+                  l10n.detailsOwner,
                   style:
                       text.labelMedium?.copyWith(color: colors.onSurfaceVariant),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  room.ownerFullName.isEmpty ? 'Unknown' : room.ownerFullName,
+                  room.ownerFullName.isEmpty
+                      ? l10n.commonUnknown
+                      : room.ownerFullName,
                   style: text.titleSmall,
                 ),
                 if (room.email.isNotEmpty)
