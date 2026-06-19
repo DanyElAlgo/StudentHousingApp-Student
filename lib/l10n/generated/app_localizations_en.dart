@@ -305,6 +305,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailsChatButton => 'Chat';
 
   @override
+  String get detailsShareButton => 'Share';
+
+  @override
+  String detailsShareMessage(String roomName, String url) {
+    return 'Check out \"$roomName\" on Student Lib: $url';
+  }
+
+  @override
   String get detailsBookingSuccessTitle => 'Room booked';
 
   @override

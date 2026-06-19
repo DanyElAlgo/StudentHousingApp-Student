@@ -670,6 +670,18 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get detailsChatButton;
 
+  /// No description provided for @detailsShareButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get detailsShareButton;
+
+  /// No description provided for @detailsShareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out \"{roomName}\" on Student Lib: {url}'**
+  String detailsShareMessage(String roomName, String url);
+
   /// No description provided for @detailsBookingSuccessTitle.
   ///
   /// In en, this message translates to:
