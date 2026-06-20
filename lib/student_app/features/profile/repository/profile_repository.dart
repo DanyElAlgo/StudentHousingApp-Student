@@ -61,6 +61,25 @@ class ProfileRepository {
     }
   }
 
+  Future<void> uploadAvatar(
+    List<int> bytes, {
+    required String filename,
+    required String subtype,
+  }) async {
+    try {
+      final form = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          bytes,
+          filename: filename,
+          contentType: DioMediaType('image', subtype),
+        ),
+      });
+      await _dio.put('/api/user/avatar', data: form);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Could not update your profile picture.');
+    }
+  }
+
   Map<String, dynamic> _asMap(dynamic data) {
     if (data is Map<String, dynamic>) return data;
     if (data is Map) return Map<String, dynamic>.from(data);
