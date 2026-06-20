@@ -1,0 +1,6 @@
+library;
+
+export 'student_app/core/router/app_router.dart'
+    show studentExperienceRoutes, studentInitialLocation;
+export 'student_app/features/auth/providers/auth_providers.dart' show dioProvider;
+export 'l10n/generated/app_localizations.dart';
