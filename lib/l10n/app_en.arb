@@ -152,5 +152,12 @@
   "profileSelectNationality": "Select your nationality",
   "profileSaveChanges": "Save changes",
   "profileFirstNameRequired": "First name is required.",
-  "profileUpdated": "Profile updated."
+  "profileUpdated": "Profile updated.",
+  "profileChangePhoto": "Change photo",
+  "profileTakePhoto": "Take photo",
+  "profileChooseGallery": "Choose from gallery",
+  "profilePhotoPreviewTitle": "Use this photo?",
+  "profilePhotoConfirm": "Use photo",
+  "profilePhotoUpdated": "Profile picture updated.",
+  "profilePhotoError": "Could not update your profile picture."
 }

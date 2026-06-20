@@ -147,5 +147,12 @@
   "profileSelectNationality": "Selecione sua nacionalidade",
   "profileSaveChanges": "Salvar alterações",
   "profileFirstNameRequired": "O nome é obrigatório.",
-  "profileUpdated": "Perfil atualizado."
+  "profileUpdated": "Perfil atualizado.",
+  "profileChangePhoto": "Alterar foto",
+  "profileTakePhoto": "Tirar foto",
+  "profileChooseGallery": "Escolher da galeria",
+  "profilePhotoPreviewTitle": "Usar esta foto?",
+  "profilePhotoConfirm": "Usar foto",
+  "profilePhotoUpdated": "Foto de perfil atualizada.",
+  "profilePhotoError": "Não foi possível atualizar sua foto de perfil."
 }
