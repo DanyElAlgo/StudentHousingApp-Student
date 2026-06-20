@@ -58,6 +58,8 @@ dependencies:
   signalr_netcore: ^1.4.4
   share_plus: ^11.0.0
   app_links: ^6.3.2
+  image_picker: ^1.1.2
+  flutter_image_compress: ^2.3.0
 
 dev_dependencies:
   flutter_test:

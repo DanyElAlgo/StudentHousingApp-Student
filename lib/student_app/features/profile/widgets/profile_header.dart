@@ -3,6 +3,7 @@ import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../repository/models/user_profile.dart';
+import 'editable_avatar.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key, required this.profile});
@@ -11,20 +12,11 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
     final TextTheme text = Theme.of(context).textTheme;
-    final bool hasImage = profile.imageUrl.trim().isNotEmpty;
 
     return Column(
       children: [
-        CircleAvatar(
-          radius: 44,
-          backgroundColor: colors.primary,
-          backgroundImage: hasImage ? NetworkImage(profile.imageUrl) : null,
-          child: hasImage
-              ? null
-              : Icon(Icons.person, size: 44, color: colors.onPrimary),
-        ),
+        EditableAvatar(profile: profile),
         const SizedBox(height: AppSpacing.md),
         Text(
           profile.fullName.isEmpty
