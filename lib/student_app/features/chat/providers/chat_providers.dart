@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:housing_core/housing_core.dart';
 
 import '../../../core/utils/jwt.dart';
 import '../../auth/providers/auth_providers.dart'
@@ -21,14 +22,14 @@ final chatLocalStoreProvider = Provider<ChatLocalStore>(
 );
 
 final currentUserIdProvider = FutureProvider<String?>((ref) async {
-  final session = await ref.watch(databaseProvider).readSession();
-  return decodeJwtSub(session?.access);
+  final token = await SecureTokenStorage().readAccessToken();
+  return decodeJwtSub(token);
 });
 
 final chatRealtimeProvider = Provider.autoDispose<ChatRealtimeService>((ref) {
-  final db = ref.watch(databaseProvider);
+  final tokenStorage = SecureTokenStorage();
   final service = ChatRealtimeService(
-    tokenProvider: () async => (await db.readSession())?.access,
+    tokenProvider: () async => tokenStorage.readAccessToken(),
   );
   ref.onDispose(service.dispose);
   return service;

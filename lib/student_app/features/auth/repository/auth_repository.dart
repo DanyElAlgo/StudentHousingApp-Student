@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:housing_core/housing_core.dart' show AuthMeta;
 
 import '../../../core/config/app_config.dart';
 import 'models/credentials_dto.dart';
@@ -20,11 +21,14 @@ class AuthRepository {
 
   final Dio _dio;
 
+  Options get _public => Options(extra: {AuthMeta.requiresAuthKey: false});
+
   Future<CredentialsDto> login(String email, String password) async {
     try {
       final res = await _dio.post(
         '/api/login',
         data: LoginDto(email: email, password: password).toJson(),
+        options: _public,
       );
       return CredentialsDto.fromJson(_asMap(res.data));
     } on DioException catch (e) {
@@ -34,7 +38,11 @@ class AuthRepository {
 
   Future<String> register(RegisterDto dto) async {
     try {
-      final res = await _dio.post('/api/register', data: dto.toJson());
+      final res = await _dio.post(
+        '/api/register',
+        data: dto.toJson(),
+        options: _public,
+      );
       final map = _asMap(res.data);
       return (map['userId'] ?? '').toString();
     } on DioException catch (e) {
@@ -44,7 +52,11 @@ class AuthRepository {
 
   Future<GoogleAuthResponse> googleLogin(String idToken) async {
     try {
-      final res = await _dio.post('/api/login/google', data: {'idToken': idToken});
+      final res = await _dio.post(
+        '/api/login/google',
+        data: {'idToken': idToken},
+        options: _public,
+      );
       return GoogleAuthResponse.fromJson(_asMap(res.data));
     } on DioException catch (e) {
       throw _mapError(e, 'Google sign-in failed.');
@@ -56,6 +68,7 @@ class AuthRepository {
       final res = await _dio.post(
         '/api/register/google',
         data: {'idToken': idToken, 'role': AppConfig.studentRole},
+        options: _public,
       );
       return CredentialsDto.fromJson(_asMap(res.data));
     } on DioException catch (e) {
