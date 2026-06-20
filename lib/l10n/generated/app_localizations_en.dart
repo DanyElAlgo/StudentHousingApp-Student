@@ -411,4 +411,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileUpdated => 'Profile updated.';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profileTakePhoto => 'Take photo';
+
+  @override
+  String get profileChooseGallery => 'Choose from gallery';
+
+  @override
+  String get profilePhotoPreviewTitle => 'Use this photo?';
+
+  @override
+  String get profilePhotoConfirm => 'Use photo';
+
+  @override
+  String get profilePhotoUpdated => 'Profile picture updated.';
+
+  @override
+  String get profilePhotoError => 'Could not update your profile picture.';
 }
