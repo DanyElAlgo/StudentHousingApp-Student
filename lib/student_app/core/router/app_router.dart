@@ -6,6 +6,7 @@ import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/bookings/screens/bookings_screen.dart';
+import '../../features/chat/chat_thread_args.dart';
 import '../../features/chat/screens/chat_list_screen.dart';
 import '../../features/chat/screens/chat_thread_screen.dart';
 import '../../features/home/screens/home_screen.dart';
@@ -28,7 +29,7 @@ List<RouteBase> studentExperienceRoutes() => [
     path: '/chat/:chatId',
     builder: (_, state) => ChatThreadScreen(
       chatId: int.tryParse(state.pathParameters['chatId'] ?? '') ?? 0,
-      title: state.extra as String?,
+      args: state.extra as ChatThreadArgs?,
     ),
   ),
 

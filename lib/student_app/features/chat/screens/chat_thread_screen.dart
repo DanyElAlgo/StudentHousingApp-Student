@@ -3,15 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/utils/formatters.dart';
 import '../chat_formatters.dart';
+import '../chat_thread_args.dart';
 import '../providers/chat_providers.dart';
 import '../repository/models/chat_message.dart';
 
 class ChatThreadScreen extends ConsumerStatefulWidget {
-  const ChatThreadScreen({super.key, required this.chatId, this.title});
+  const ChatThreadScreen({super.key, required this.chatId, this.args});
 
   final int chatId;
-  final String? title;
+  final ChatThreadArgs? args;
 
   @override
   ConsumerState<ChatThreadScreen> createState() => _ChatThreadScreenState();
@@ -111,8 +113,28 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       if (list != null) _markReadUpTo(list);
     });
 
+    final ChatThreadArgs? args = widget.args;
+    final String headerName = (args?.name.isNotEmpty ?? false)
+        ? args!.name
+        : l10n.chatThreadTitle;
+    final String headerImageUrl = args?.imageUrl ?? '';
+
     return AppScaffold(
-      appBar: AppBar(title: Text(widget.title ?? l10n.chatThreadTitle)),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            AppAvatar(
+              radius: 16,
+              name: args?.name,
+              image: headerImageUrl.isEmpty
+                  ? null
+                  : NetworkImage(resolveImageUrl(headerImageUrl)),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(child: Text(headerName, overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           if (!connected) const _ConnectionBanner(),
