@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/utils/formatters.dart';
 import '../chat_formatters.dart';
+import '../chat_thread_args.dart';
 import '../providers/chat_providers.dart';
 import '../repository/models/chat_summary.dart';
 
@@ -49,9 +51,17 @@ class ChatListScreen extends ConsumerWidget {
                     chat.lastMessageAt,
                   ),
                   unreadCount: chat.unreadCount,
+                  avatar: chat.otherParticipantImageUrl.isEmpty
+                      ? null
+                      : NetworkImage(
+                          resolveImageUrl(chat.otherParticipantImageUrl),
+                        ),
                   onTap: () => context.push(
                     '/chat/${chat.chatId}',
-                    extra: chat.otherParticipantName,
+                    extra: ChatThreadArgs(
+                      name: chat.otherParticipantName,
+                      imageUrl: chat.otherParticipantImageUrl,
+                    ),
                   ),
                 );
               },

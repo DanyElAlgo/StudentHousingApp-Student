@@ -7,6 +7,8 @@ class CachedConversations extends Table {
   IntColumn get chatId => integer()();
   TextColumn get otherParticipantId => text()();
   TextColumn get otherParticipantName => text()();
+  TextColumn get otherParticipantImageUrl =>
+      text().withDefault(const Constant(''))();
   TextColumn get lastMessage => text().nullable()();
   DateTimeColumn get lastMessageAt => dateTime().nullable()();
   IntColumn get unreadCount => integer().withDefault(const Constant(0))();
@@ -54,7 +56,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forExecutor(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -69,6 +71,12 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.deleteTable('auth_tokens');
+      }
+      if (from < 5) {
+        await m.addColumn(
+          cachedConversations,
+          cachedConversations.otherParticipantImageUrl,
+        );
       }
     },
   );
