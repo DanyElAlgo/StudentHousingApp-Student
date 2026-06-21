@@ -12,6 +12,8 @@ const List<Locale> kSupportedLocales = [
   Locale('pt'),
 ];
 
+final localeHookProvider = Provider<void Function(Locale)?>((_) => null);
+
 final localeControllerProvider =
     NotifierProvider<LocaleController, Locale?>(LocaleController.new);
 
@@ -33,6 +35,7 @@ class LocaleController extends Notifier<Locale?> {
 
   Future<void> setLocale(Locale locale) async {
     state = locale;
+    ref.read(localeHookProvider)?.call(locale);
     await _db.saveLanguageCode(locale.languageCode);
   }
 }

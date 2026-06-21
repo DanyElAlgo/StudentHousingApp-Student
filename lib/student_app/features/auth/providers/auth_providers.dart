@@ -41,6 +41,8 @@ final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(ref.watch(dioProvider)),
 );
 
+final logoutHookProvider = Provider<void Function()?>((_) => null);
+
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,
 );
@@ -150,6 +152,7 @@ class AuthController extends Notifier<AuthState> {
     try {
       await GoogleAuthService.instance.signOut();
     } catch (_) {}
+    ref.read(logoutHookProvider)?.call();
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
