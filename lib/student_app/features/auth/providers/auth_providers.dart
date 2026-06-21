@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:housing_core/housing_core.dart';
 
 import '../../../core/auth/google_auth_service.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/network/auth_interceptor.dart';
-import '../../../core/network/dio_client.dart';
 import '../repository/auth_repository.dart';
 import '../repository/models/register_dto.dart';
 
@@ -29,22 +29,25 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 });
 
 final dioProvider = Provider<Dio>((ref) {
-  final db = ref.watch(databaseProvider);
-  final dio = buildBaseDio();
-  dio.interceptors.add(
-    AuthInterceptor(
-      db: db,
-      refreshDio: buildBaseDio(),
-      onSessionExpired: () async =>
-          ref.read(authControllerProvider.notifier).handleSessionExpired(),
-    ),
+  final tokenStorage = SecureTokenStorage();
+  return DioClient.create(
+    tokenStorage: tokenStorage,
+    refreshClient: DioClient.createRefreshClient(),
+    onSessionExpired: () =>
+        ref.read(authControllerProvider.notifier).handleSessionExpired(),
   );
-  return dio;
 });
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(ref.watch(dioProvider)),
 );
+
+final logoutHookProvider = Provider<void Function()?>((_) => null);
+
+/// Filled by the shell with `(ctx) => getIt<RoleSwitchController>().open(ctx)`.
+/// Null when the student app runs standalone (outside the shell).
+final changeRoleHookProvider =
+    Provider<void Function(BuildContext)?>((_) => null);
 
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,
@@ -66,14 +69,16 @@ class AuthController extends Notifier<AuthState> {
     return const AuthState(status: AuthStatus.unknown);
   }
 
+  final SecureTokenStorage _tokenStorage = SecureTokenStorage();
+
   AppDatabase get _db => ref.read(databaseProvider);
   AuthRepository get _repo => ref.read(authRepositoryProvider);
 
   Future<void> _restoreSession() async {
-    final session = await _db.readSession();
+    final hasSession = await _tokenStorage.hasTokens();
     state = AuthState(
       status:
-          session == null ? AuthStatus.unauthenticated : AuthStatus.authenticated,
+          hasSession ? AuthStatus.authenticated : AuthStatus.unauthenticated,
     );
   }
 
@@ -81,7 +86,10 @@ class AuthController extends Notifier<AuthState> {
     state = AuthState(status: state.status, isBusy: true);
     try {
       final creds = await _repo.login(email, password);
-      await _db.saveSession(creds.accessToken, creds.refreshToken);
+      await _tokenStorage.saveTokens(
+        accessToken: creds.accessToken,
+        refreshToken: creds.refreshToken,
+      );
       state = const AuthState(status: AuthStatus.authenticated);
     } on AuthException catch (e) {
       state = AuthState(status: AuthStatus.unauthenticated, errorMessage: e.message);
@@ -132,7 +140,10 @@ class AuthController extends Notifier<AuthState> {
       final creds = (resp.isNewUser || resp.credentials == null)
           ? await _repo.googleRegister(idToken)
           : resp.credentials!;
-      await _db.saveSession(creds.accessToken, creds.refreshToken);
+      await _tokenStorage.saveTokens(
+        accessToken: creds.accessToken,
+        refreshToken: creds.refreshToken,
+      );
       state = const AuthState(status: AuthStatus.authenticated);
     } on AuthException catch (e) {
       state = AuthState(status: state.status, errorMessage: e.message);
@@ -142,11 +153,12 @@ class AuthController extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
-    await _db.clearSession();
+    await _tokenStorage.clear();
     await _db.clearChatData();
     try {
       await GoogleAuthService.instance.signOut();
     } catch (_) {}
+    ref.read(logoutHookProvider)?.call();
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 

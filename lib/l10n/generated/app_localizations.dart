@@ -850,6 +850,12 @@ abstract class AppLocalizations {
   /// **'Log out'**
   String get profileLogout;
 
+  /// No description provided for @profileChangeRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Change role'**
+  String get profileChangeRole;
+
   /// No description provided for @profileLanguageLabel.
   ///
   /// In en, this message translates to:
@@ -879,6 +885,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated.'**
   String get profileUpdated;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profileTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get profileTakePhoto;
+
+  /// No description provided for @profileChooseGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get profileChooseGallery;
+
+  /// No description provided for @profilePhotoPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this photo?'**
+  String get profilePhotoPreviewTitle;
+
+  /// No description provided for @profilePhotoConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Use photo'**
+  String get profilePhotoConfirm;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile picture updated.'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @profilePhotoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update your profile picture.'**
+  String get profilePhotoError;
 }
 
 class _AppLocalizationsDelegate

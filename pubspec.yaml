@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.11.1
@@ -45,6 +45,14 @@ dependencies:
       url: https://github.com/rafael1199v/housing-design-system.git
       ref: release/1.1.0
 
+  # Shared, framework-agnostic plumbing (session, network, storage, roles).
+  # The shell consumes student_lib via this same core; for local co-dev the
+  # override below points at the sibling clone (see dependency_overrides).
+  housing_core:
+    git:
+      url: https://github.com/rafael1199v/housing-core-mobile.git
+      ref: release/1.0.0
+
 
   dio: ^5.9.2
   flutter_riverpod: ^3.3.2
@@ -60,6 +68,12 @@ dependencies:
   app_links: ^6.3.2
   image_picker: ^1.1.2
   flutter_image_compress: ^2.3.0
+
+# Local co-dev: resolve housing_core from the sibling clone so it can be edited
+# live without pushing. Remove this block to use the pinned git ref above.
+dependency_overrides:
+  housing_core:
+    path: ../housing-core-mobile
 
 dev_dependencies:
   flutter_test:

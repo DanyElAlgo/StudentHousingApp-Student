@@ -38,13 +38,21 @@ class _EditableAvatarState extends ConsumerState<EditableAvatar> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        CircleAvatar(
-          radius: _radius,
-          backgroundColor: colors.primary,
-          backgroundImage: hasImage ? NetworkImage(_bustedUrl(raw, bust)) : null,
-          child: hasImage
-              ? null
-              : Icon(Icons.person, size: _radius, color: colors.onPrimary),
+        SizedBox(
+          width: _radius * 2,
+          height: _radius * 2,
+          child: ClipOval(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: colors.primary),
+              child: hasImage
+                  ? Image.network(
+                      _bustedUrl(raw, bust),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => _placeholder(colors),
+                    )
+                  : _placeholder(colors),
+            ),
+          ),
         ),
         if (uploading)
           Positioned.fill(
@@ -90,12 +98,11 @@ class _EditableAvatarState extends ConsumerState<EditableAvatar> {
     );
   }
 
-  String _bustedUrl(String raw, int bust) {
-    final String url = resolveImageUrl(raw);
-    if (bust == 0) return url;
-    final String sep = url.contains('?') ? '&' : '?';
-    return '$url${sep}v=$bust';
-  }
+  Widget _placeholder(ColorScheme colors) => Center(
+        child: Icon(Icons.person, size: _radius, color: colors.onPrimary),
+      );
+
+  String _bustedUrl(String raw, int bust) => resolveImageUrl(raw);
 
   Future<void> _onEditPressed() async {
     final AppLocalizations l10n = AppLocalizations.of(context);

@@ -398,6 +398,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLogout => 'Cerrar sesión';
 
   @override
+  String get profileChangeRole => 'Cambiar de rol';
+
+  @override
   String get profileLanguageLabel => 'Idioma';
 
   @override
@@ -411,4 +414,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileUpdated => 'Perfil actualizado.';
+
+  @override
+  String get profileChangePhoto => 'Cambiar foto';
+
+  @override
+  String get profileTakePhoto => 'Tomar foto';
+
+  @override
+  String get profileChooseGallery => 'Elegir de la galería';
+
+  @override
+  String get profilePhotoPreviewTitle => '¿Usar esta foto?';
+
+  @override
+  String get profilePhotoConfirm => 'Usar foto';
+
+  @override
+  String get profilePhotoUpdated => 'Foto de perfil actualizada.';
+
+  @override
+  String get profilePhotoError => 'No se pudo actualizar tu foto de perfil.';
 }

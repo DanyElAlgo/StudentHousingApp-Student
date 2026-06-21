@@ -14,6 +14,57 @@ import '../../features/roomDetails/screens/room_details_screen.dart';
 import '../../features/roomSearch/screens/room_search_screen.dart';
 import '../widgets/app_shell.dart';
 
+const String studentInitialLocation = '/home';
+
+List<RouteBase> studentExperienceRoutes() => [
+  GoRoute(
+    path: '/room/:id',
+    builder: (_, state) => RoomDetailsScreen(
+      roomId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+    ),
+  ),
+
+  GoRoute(
+    path: '/chat/:chatId',
+    builder: (_, state) => ChatThreadScreen(
+      chatId: int.tryParse(state.pathParameters['chatId'] ?? '') ?? 0,
+      title: state.extra as String?,
+    ),
+  ),
+
+  StatefulShellRoute.indexedStack(
+    builder: (_, _, navigationShell) =>
+        AppShell(navigationShell: navigationShell),
+    branches: [
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: '/chat', builder: (_, _) => const ChatListScreen()),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: '/rooms', builder: (_, _) => const RoomSearchScreen()),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: '/bookings', builder: (_, _) => const BookingsScreen()),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+        ],
+      ),
+    ],
+  ),
+];
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.onDispose(refresh.dispose);
@@ -47,61 +98,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
 
-      GoRoute(
-        path: '/room/:id',
-        builder: (_, state) => RoomDetailsScreen(
-          roomId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
-        ),
-      ),
-
-      GoRoute(
-        path: '/chat/:chatId',
-        builder: (_, state) => ChatThreadScreen(
-          chatId: int.tryParse(state.pathParameters['chatId'] ?? '') ?? 0,
-          title: state.extra as String?,
-        ),
-      ),
-
-      StatefulShellRoute.indexedStack(
-        builder: (_, _, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(path: '/chat', builder: (_, _) => const ChatListScreen()),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/rooms',
-                builder: (_, _) => const RoomSearchScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/bookings',
-                builder: (_, _) => const BookingsScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/profile',
-                builder: (_, _) => const ProfileScreen(),
-              ),
-            ],
-          ),
-        ],
-      ),
+      ...studentExperienceRoutes(),
     ],
   );
 });
