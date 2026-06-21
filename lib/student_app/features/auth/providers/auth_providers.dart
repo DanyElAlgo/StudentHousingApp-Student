@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_core/housing_core.dart';
 
@@ -42,6 +43,11 @@ final authRepositoryProvider = Provider<AuthRepository>(
 );
 
 final logoutHookProvider = Provider<void Function()?>((_) => null);
+
+/// Filled by the shell with `(ctx) => getIt<RoleSwitchController>().open(ctx)`.
+/// Null when the student app runs standalone (outside the shell).
+final changeRoleHookProvider =
+    Provider<void Function(BuildContext)?>((_) => null);
 
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,

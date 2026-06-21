@@ -26,6 +26,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final AsyncValue<UserProfile> profileAsync = ref.watch(userProfileProvider);
+    final void Function(BuildContext)? changeRole =
+        ref.watch(changeRoleHookProvider);
 
     return AppScaffold(
       appBar: AppBar(title: Text(l10n.profileTitle)),
@@ -83,6 +85,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       onPressed: () =>
                           ref.read(authControllerProvider.notifier).logout(),
                     ),
+                    if (changeRole != null) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      AppSecondaryButton(
+                        label: l10n.profileChangeRole,
+                        icon: Icons.swap_horiz,
+                        expanded: true,
+                        onPressed: () => changeRole(context),
+                      ),
+                    ],
                   ],
                 ],
               ),
