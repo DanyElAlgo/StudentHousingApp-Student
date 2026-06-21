@@ -398,6 +398,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLogout => 'Cerrar sesión';
 
   @override
+  String get profileChangeRole => 'Cambiar de rol';
+
+  @override
   String get profileLanguageLabel => 'Idioma';
 
   @override

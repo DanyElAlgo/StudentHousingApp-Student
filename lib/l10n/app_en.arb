@@ -148,6 +148,7 @@
   "profileBirthdateLabel": "Birthdate",
   "profileEditButton": "Edit profile",
   "profileLogout": "Log out",
+  "profileChangeRole": "Change role",
   "profileLanguageLabel": "Language",
   "profileSelectNationality": "Select your nationality",
   "profileSaveChanges": "Save changes",

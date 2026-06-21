@@ -398,6 +398,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileLogout => 'Sair';
 
   @override
+  String get profileChangeRole => 'Mudar de função';
+
+  @override
   String get profileLanguageLabel => 'Idioma';
 
   @override

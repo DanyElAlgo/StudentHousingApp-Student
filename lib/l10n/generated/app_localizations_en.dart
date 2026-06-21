@@ -398,6 +398,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLogout => 'Log out';
 
   @override
+  String get profileChangeRole => 'Change role';
+
+  @override
   String get profileLanguageLabel => 'Language';
 
   @override

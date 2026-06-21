@@ -850,6 +850,12 @@ abstract class AppLocalizations {
   /// **'Log out'**
   String get profileLogout;
 
+  /// No description provided for @profileChangeRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Change role'**
+  String get profileChangeRole;
+
   /// No description provided for @profileLanguageLabel.
   ///
   /// In en, this message translates to:

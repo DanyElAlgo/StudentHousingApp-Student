@@ -143,6 +143,7 @@
   "profileBirthdateLabel": "Fecha de nacimiento",
   "profileEditButton": "Editar perfil",
   "profileLogout": "Cerrar sesión",
+  "profileChangeRole": "Cambiar de rol",
   "profileLanguageLabel": "Idioma",
   "profileSelectNationality": "Selecciona tu nacionalidad",
   "profileSaveChanges": "Guardar cambios",
