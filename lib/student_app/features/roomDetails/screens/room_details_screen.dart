@@ -152,6 +152,7 @@ class _DetailsContent extends StatelessWidget {
               child: ChatWithOwnerButton(
                 roomId: room.id,
                 ownerName: room.ownerFullName,
+                ownerImageUrl: room.imageUrl,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
