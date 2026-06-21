@@ -17,9 +17,7 @@ class LanguageSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = AppLocalizations.of(context);
-    final String current =
-        ref.watch(localeControllerProvider)?.languageCode ??
-        Localizations.localeOf(context).languageCode;
+    final String current = Localizations.localeOf(context).languageCode;
 
     return AppCard(
       bordered: true,
