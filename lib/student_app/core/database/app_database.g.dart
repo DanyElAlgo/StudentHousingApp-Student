@@ -40,6 +40,18 @@ class $CachedConversationsTable extends CachedConversations
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _otherParticipantImageUrlMeta =
+      const VerificationMeta('otherParticipantImageUrl');
+  @override
+  late final GeneratedColumn<String> otherParticipantImageUrl =
+      GeneratedColumn<String>(
+        'other_participant_image_url',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
   static const VerificationMeta _lastMessageMeta = const VerificationMeta(
     'lastMessage',
   );
@@ -91,6 +103,7 @@ class $CachedConversationsTable extends CachedConversations
     chatId,
     otherParticipantId,
     otherParticipantName,
+    otherParticipantImageUrl,
     lastMessage,
     lastMessageAt,
     unreadCount,
@@ -135,6 +148,15 @@ class $CachedConversationsTable extends CachedConversations
       );
     } else if (isInserting) {
       context.missing(_otherParticipantNameMeta);
+    }
+    if (data.containsKey('other_participant_image_url')) {
+      context.handle(
+        _otherParticipantImageUrlMeta,
+        otherParticipantImageUrl.isAcceptableOrUnknown(
+          data['other_participant_image_url']!,
+          _otherParticipantImageUrlMeta,
+        ),
+      );
     }
     if (data.containsKey('last_message')) {
       context.handle(
@@ -192,6 +214,10 @@ class $CachedConversationsTable extends CachedConversations
         DriftSqlType.string,
         data['${effectivePrefix}other_participant_name'],
       )!,
+      otherParticipantImageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}other_participant_image_url'],
+      )!,
       lastMessage: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_message'],
@@ -222,6 +248,7 @@ class CachedConversation extends DataClass
   final int chatId;
   final String otherParticipantId;
   final String otherParticipantName;
+  final String otherParticipantImageUrl;
   final String? lastMessage;
   final DateTime? lastMessageAt;
   final int unreadCount;
@@ -230,6 +257,7 @@ class CachedConversation extends DataClass
     required this.chatId,
     required this.otherParticipantId,
     required this.otherParticipantName,
+    required this.otherParticipantImageUrl,
     this.lastMessage,
     this.lastMessageAt,
     required this.unreadCount,
@@ -241,6 +269,9 @@ class CachedConversation extends DataClass
     map['chat_id'] = Variable<int>(chatId);
     map['other_participant_id'] = Variable<String>(otherParticipantId);
     map['other_participant_name'] = Variable<String>(otherParticipantName);
+    map['other_participant_image_url'] = Variable<String>(
+      otherParticipantImageUrl,
+    );
     if (!nullToAbsent || lastMessage != null) {
       map['last_message'] = Variable<String>(lastMessage);
     }
@@ -257,6 +288,7 @@ class CachedConversation extends DataClass
       chatId: Value(chatId),
       otherParticipantId: Value(otherParticipantId),
       otherParticipantName: Value(otherParticipantName),
+      otherParticipantImageUrl: Value(otherParticipantImageUrl),
       lastMessage: lastMessage == null && nullToAbsent
           ? const Value.absent()
           : Value(lastMessage),
@@ -281,6 +313,9 @@ class CachedConversation extends DataClass
       otherParticipantName: serializer.fromJson<String>(
         json['otherParticipantName'],
       ),
+      otherParticipantImageUrl: serializer.fromJson<String>(
+        json['otherParticipantImageUrl'],
+      ),
       lastMessage: serializer.fromJson<String?>(json['lastMessage']),
       lastMessageAt: serializer.fromJson<DateTime?>(json['lastMessageAt']),
       unreadCount: serializer.fromJson<int>(json['unreadCount']),
@@ -294,6 +329,9 @@ class CachedConversation extends DataClass
       'chatId': serializer.toJson<int>(chatId),
       'otherParticipantId': serializer.toJson<String>(otherParticipantId),
       'otherParticipantName': serializer.toJson<String>(otherParticipantName),
+      'otherParticipantImageUrl': serializer.toJson<String>(
+        otherParticipantImageUrl,
+      ),
       'lastMessage': serializer.toJson<String?>(lastMessage),
       'lastMessageAt': serializer.toJson<DateTime?>(lastMessageAt),
       'unreadCount': serializer.toJson<int>(unreadCount),
@@ -305,6 +343,7 @@ class CachedConversation extends DataClass
     int? chatId,
     String? otherParticipantId,
     String? otherParticipantName,
+    String? otherParticipantImageUrl,
     Value<String?> lastMessage = const Value.absent(),
     Value<DateTime?> lastMessageAt = const Value.absent(),
     int? unreadCount,
@@ -313,6 +352,8 @@ class CachedConversation extends DataClass
     chatId: chatId ?? this.chatId,
     otherParticipantId: otherParticipantId ?? this.otherParticipantId,
     otherParticipantName: otherParticipantName ?? this.otherParticipantName,
+    otherParticipantImageUrl:
+        otherParticipantImageUrl ?? this.otherParticipantImageUrl,
     lastMessage: lastMessage.present ? lastMessage.value : this.lastMessage,
     lastMessageAt: lastMessageAt.present
         ? lastMessageAt.value
@@ -329,6 +370,9 @@ class CachedConversation extends DataClass
       otherParticipantName: data.otherParticipantName.present
           ? data.otherParticipantName.value
           : this.otherParticipantName,
+      otherParticipantImageUrl: data.otherParticipantImageUrl.present
+          ? data.otherParticipantImageUrl.value
+          : this.otherParticipantImageUrl,
       lastMessage: data.lastMessage.present
           ? data.lastMessage.value
           : this.lastMessage,
@@ -348,6 +392,7 @@ class CachedConversation extends DataClass
           ..write('chatId: $chatId, ')
           ..write('otherParticipantId: $otherParticipantId, ')
           ..write('otherParticipantName: $otherParticipantName, ')
+          ..write('otherParticipantImageUrl: $otherParticipantImageUrl, ')
           ..write('lastMessage: $lastMessage, ')
           ..write('lastMessageAt: $lastMessageAt, ')
           ..write('unreadCount: $unreadCount, ')
@@ -361,6 +406,7 @@ class CachedConversation extends DataClass
     chatId,
     otherParticipantId,
     otherParticipantName,
+    otherParticipantImageUrl,
     lastMessage,
     lastMessageAt,
     unreadCount,
@@ -373,6 +419,7 @@ class CachedConversation extends DataClass
           other.chatId == this.chatId &&
           other.otherParticipantId == this.otherParticipantId &&
           other.otherParticipantName == this.otherParticipantName &&
+          other.otherParticipantImageUrl == this.otherParticipantImageUrl &&
           other.lastMessage == this.lastMessage &&
           other.lastMessageAt == this.lastMessageAt &&
           other.unreadCount == this.unreadCount &&
@@ -383,6 +430,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
   final Value<int> chatId;
   final Value<String> otherParticipantId;
   final Value<String> otherParticipantName;
+  final Value<String> otherParticipantImageUrl;
   final Value<String?> lastMessage;
   final Value<DateTime?> lastMessageAt;
   final Value<int> unreadCount;
@@ -391,6 +439,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     this.chatId = const Value.absent(),
     this.otherParticipantId = const Value.absent(),
     this.otherParticipantName = const Value.absent(),
+    this.otherParticipantImageUrl = const Value.absent(),
     this.lastMessage = const Value.absent(),
     this.lastMessageAt = const Value.absent(),
     this.unreadCount = const Value.absent(),
@@ -400,6 +449,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     this.chatId = const Value.absent(),
     required String otherParticipantId,
     required String otherParticipantName,
+    this.otherParticipantImageUrl = const Value.absent(),
     this.lastMessage = const Value.absent(),
     this.lastMessageAt = const Value.absent(),
     this.unreadCount = const Value.absent(),
@@ -411,6 +461,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     Expression<int>? chatId,
     Expression<String>? otherParticipantId,
     Expression<String>? otherParticipantName,
+    Expression<String>? otherParticipantImageUrl,
     Expression<String>? lastMessage,
     Expression<DateTime>? lastMessageAt,
     Expression<int>? unreadCount,
@@ -422,6 +473,8 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
         'other_participant_id': otherParticipantId,
       if (otherParticipantName != null)
         'other_participant_name': otherParticipantName,
+      if (otherParticipantImageUrl != null)
+        'other_participant_image_url': otherParticipantImageUrl,
       if (lastMessage != null) 'last_message': lastMessage,
       if (lastMessageAt != null) 'last_message_at': lastMessageAt,
       if (unreadCount != null) 'unread_count': unreadCount,
@@ -433,6 +486,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     Value<int>? chatId,
     Value<String>? otherParticipantId,
     Value<String>? otherParticipantName,
+    Value<String>? otherParticipantImageUrl,
     Value<String?>? lastMessage,
     Value<DateTime?>? lastMessageAt,
     Value<int>? unreadCount,
@@ -442,6 +496,8 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
       chatId: chatId ?? this.chatId,
       otherParticipantId: otherParticipantId ?? this.otherParticipantId,
       otherParticipantName: otherParticipantName ?? this.otherParticipantName,
+      otherParticipantImageUrl:
+          otherParticipantImageUrl ?? this.otherParticipantImageUrl,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageAt: lastMessageAt ?? this.lastMessageAt,
       unreadCount: unreadCount ?? this.unreadCount,
@@ -461,6 +517,11 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     if (otherParticipantName.present) {
       map['other_participant_name'] = Variable<String>(
         otherParticipantName.value,
+      );
+    }
+    if (otherParticipantImageUrl.present) {
+      map['other_participant_image_url'] = Variable<String>(
+        otherParticipantImageUrl.value,
       );
     }
     if (lastMessage.present) {
@@ -484,6 +545,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
           ..write('chatId: $chatId, ')
           ..write('otherParticipantId: $otherParticipantId, ')
           ..write('otherParticipantName: $otherParticipantName, ')
+          ..write('otherParticipantImageUrl: $otherParticipantImageUrl, ')
           ..write('lastMessage: $lastMessage, ')
           ..write('lastMessageAt: $lastMessageAt, ')
           ..write('unreadCount: $unreadCount, ')
@@ -1121,6 +1183,7 @@ typedef $$CachedConversationsTableCreateCompanionBuilder =
       Value<int> chatId,
       required String otherParticipantId,
       required String otherParticipantName,
+      Value<String> otherParticipantImageUrl,
       Value<String?> lastMessage,
       Value<DateTime?> lastMessageAt,
       Value<int> unreadCount,
@@ -1131,6 +1194,7 @@ typedef $$CachedConversationsTableUpdateCompanionBuilder =
       Value<int> chatId,
       Value<String> otherParticipantId,
       Value<String> otherParticipantName,
+      Value<String> otherParticipantImageUrl,
       Value<String?> lastMessage,
       Value<DateTime?> lastMessageAt,
       Value<int> unreadCount,
@@ -1158,6 +1222,11 @@ class $$CachedConversationsTableFilterComposer
 
   ColumnFilters<String> get otherParticipantName => $composableBuilder(
     column: $table.otherParticipantName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1206,6 +1275,11 @@ class $$CachedConversationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get lastMessage => $composableBuilder(
     column: $table.lastMessage,
     builder: (column) => ColumnOrderings(column),
@@ -1246,6 +1320,11 @@ class $$CachedConversationsTableAnnotationComposer
 
   GeneratedColumn<String> get otherParticipantName => $composableBuilder(
     column: $table.otherParticipantName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
     builder: (column) => column,
   );
 
@@ -1314,6 +1393,7 @@ class $$CachedConversationsTableTableManager
                 Value<int> chatId = const Value.absent(),
                 Value<String> otherParticipantId = const Value.absent(),
                 Value<String> otherParticipantName = const Value.absent(),
+                Value<String> otherParticipantImageUrl = const Value.absent(),
                 Value<String?> lastMessage = const Value.absent(),
                 Value<DateTime?> lastMessageAt = const Value.absent(),
                 Value<int> unreadCount = const Value.absent(),
@@ -1322,6 +1402,7 @@ class $$CachedConversationsTableTableManager
                 chatId: chatId,
                 otherParticipantId: otherParticipantId,
                 otherParticipantName: otherParticipantName,
+                otherParticipantImageUrl: otherParticipantImageUrl,
                 lastMessage: lastMessage,
                 lastMessageAt: lastMessageAt,
                 unreadCount: unreadCount,
@@ -1332,6 +1413,7 @@ class $$CachedConversationsTableTableManager
                 Value<int> chatId = const Value.absent(),
                 required String otherParticipantId,
                 required String otherParticipantName,
+                Value<String> otherParticipantImageUrl = const Value.absent(),
                 Value<String?> lastMessage = const Value.absent(),
                 Value<DateTime?> lastMessageAt = const Value.absent(),
                 Value<int> unreadCount = const Value.absent(),
@@ -1340,6 +1422,7 @@ class $$CachedConversationsTableTableManager
                 chatId: chatId,
                 otherParticipantId: otherParticipantId,
                 otherParticipantName: otherParticipantName,
+                otherParticipantImageUrl: otherParticipantImageUrl,
                 lastMessage: lastMessage,
                 lastMessageAt: lastMessageAt,
                 unreadCount: unreadCount,
