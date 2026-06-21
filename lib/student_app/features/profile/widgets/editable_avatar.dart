@@ -94,7 +94,7 @@ class _EditableAvatarState extends ConsumerState<EditableAvatar> {
     final String url = resolveImageUrl(raw);
     if (bust == 0) return url;
     final String sep = url.contains('?') ? '&' : '?';
-    return '$url${sep}v=$bust';
+    return '$url${sep}';
   }
 
   Future<void> _onEditPressed() async {
