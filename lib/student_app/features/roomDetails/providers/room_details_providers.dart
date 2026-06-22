@@ -67,5 +67,6 @@ class BookingActionController extends Notifier<bool> {
   void _refresh(int roomId) {
     ref.invalidate(roomDetailsProvider(roomId));
     ref.invalidate(featuredRoomsProvider);
+    ref.invalidate(studentBookingsProvider);
   }
 }
