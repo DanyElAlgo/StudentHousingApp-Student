@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonClear => 'Clear';
 
   @override
+  String get commonRefresh => 'Refresh';
+
+  @override
   String get commonOk => 'OK';
 
   @override

@@ -5,6 +5,7 @@
   "commonRetry": "Reintentar",
   "commonCancel": "Cancelar",
   "commonClear": "Limpiar",
+  "commonRefresh": "Actualizar",
   "commonOk": "Aceptar",
   "commonOr": "o",
   "commonNotSet": "Sin definir",

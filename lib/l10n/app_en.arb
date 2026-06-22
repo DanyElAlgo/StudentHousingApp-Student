@@ -5,6 +5,7 @@
   "commonRetry": "Retry",
   "commonCancel": "Cancel",
   "commonClear": "Clear",
+  "commonRefresh": "Refresh",
   "commonOk": "OK",
   "commonOr": "or",
   "commonNotSet": "Not set",
