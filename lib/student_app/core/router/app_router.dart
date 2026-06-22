@@ -88,10 +88,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final onAuthRoute = location == '/login' || location == '/register';
 
       if (status == AuthStatus.unauthenticated) {
-        return onAuthRoute ? null : '/login';
+        if (onAuthRoute) return null;
+        final target = state.uri.toString();
+        return '/login?from=${Uri.encodeComponent(target)}';
       }
 
-      if (onAuthRoute || location == '/') return '/home';
+      if (onAuthRoute || location == '/') {
+        final from = state.uri.queryParameters['from'];
+        if (from != null && from.isNotEmpty) return from;
+        return '/home';
+      }
       return null;
     },
     routes: [
