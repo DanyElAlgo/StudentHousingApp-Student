@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:housing_core/housing_core.dart' show AuthMeta;
 
-import '../../../core/config/app_config.dart';
 import 'models/credentials_dto.dart';
 import 'models/google_auth_response.dart';
 import 'models/login_dto.dart';
@@ -67,7 +66,7 @@ class AuthRepository {
     try {
       final res = await _dio.post(
         '/api/register/google',
-        data: {'idToken': idToken, 'role': AppConfig.studentRole},
+        data: {'idToken': idToken, 'role': 'Student'},
         options: _public,
       );
       return CredentialsDto.fromJson(_asMap(res.data));

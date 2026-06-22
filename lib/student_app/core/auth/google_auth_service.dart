@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../config/app_config.dart';
+import 'package:housing_core/housing_core.dart';
 
 class GoogleAuthService {
   GoogleAuthService._();
