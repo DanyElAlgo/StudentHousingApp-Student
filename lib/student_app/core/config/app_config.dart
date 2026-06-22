@@ -3,7 +3,12 @@ abstract final class AppConfig {
 
   static const String apiBaseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'http://localhost:5065',
+    defaultValue: 'https://api.itersapiens.rafael-vargas.dev',
+  );
+
+  static const String webBaseUrl = String.fromEnvironment(
+    'WEB_BASE_URL',
+    defaultValue: 'https://itersapiens.rafael-vargas.dev',
   );
 
   static const String googleWebClientId =
