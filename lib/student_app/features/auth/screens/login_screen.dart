@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../providers/auth_providers.dart';
 import '../widgets/auth_form_header.dart';
@@ -39,6 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final isBusy = ref.watch(authControllerProvider.select((s) => s.isBusy));
 
     ref.listen(authControllerProvider.select((s) => s.errorMessage), (_, msg) {
@@ -62,29 +64,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: AppSpacing.xxl),
-                  const AuthFormHeader(
-                    title: 'Welcome back',
-                    subtitle: 'Log in to find your next student home.',
+                  AuthFormHeader(
+                    title: l10n.authWelcomeBackTitle,
+                    subtitle: l10n.authWelcomeBackSubtitle,
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   AppTextField(
                     controller: _email,
-                    label: 'Email',
-                    hintText: 'you@example.com',
+                    label: l10n.authEmailLabel,
+                    hintText: l10n.authEmailHint,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     prefixIcon: Icons.mail_outline,
-                    validator: AuthValidators.email,
+                    validator: (v) => AuthValidators.email(v, l10n),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _password,
-                    label: 'Password',
+                    label: l10n.authPasswordLabel,
                     obscureText: _obscure,
                     textInputAction: TextInputAction.done,
                     prefixIcon: Icons.lock_outline,
                     onFieldSubmitted: (_) => _submit(),
-                    validator: AuthValidators.loginPassword,
+                    validator: (v) => AuthValidators.loginPassword(v, l10n),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscure
@@ -96,7 +98,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   AppPrimaryButton(
-                    label: 'Log in',
+                    label: l10n.authLoginButton,
                     expanded: true,
                     isLoading: isBusy,
                     onPressed: _submit,
@@ -110,11 +112,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account?",
+                        l10n.authNoAccountQuestion,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       AppTextButton(
-                        label: 'Register',
+                        label: l10n.authRegisterButton,
                         onPressed: () => context.push('/register'),
                       ),
                     ],
@@ -140,7 +142,7 @@ class _OrDivider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
-            'or',
+            AppLocalizations.of(context).commonOr,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.onSurfaceVariant,
             ),

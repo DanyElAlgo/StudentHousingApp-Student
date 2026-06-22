@@ -3,19 +3,12 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 part 'app_database.g.dart';
 
-class AuthTokens extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  TextColumn get accessToken => text()();
-  TextColumn get refreshToken => text()();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
 class CachedConversations extends Table {
   IntColumn get chatId => integer()();
   TextColumn get otherParticipantId => text()();
   TextColumn get otherParticipantName => text()();
+  TextColumn get otherParticipantImageUrl =>
+      text().withDefault(const Constant(''))();
   TextColumn get lastMessage => text().nullable()();
   DateTimeColumn get lastMessageAt => dateTime().nullable()();
   IntColumn get unreadCount => integer().withDefault(const Constant(0))();
@@ -37,7 +30,17 @@ class CachedMessages extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [AuthTokens, CachedConversations, CachedMessages])
+class AppSettings extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  TextColumn get languageCode => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DriftDatabase(
+  tables: [CachedConversations, CachedMessages, AppSettings],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
     : super(
@@ -53,7 +56,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forExecutor(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -63,30 +66,38 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(cachedConversations);
         await m.createTable(cachedMessages);
       }
+      if (from < 3) {
+        await m.createTable(appSettings);
+      }
+      if (from < 4) {
+        await m.deleteTable('auth_tokens');
+      }
+      if (from < 5) {
+        await m.addColumn(
+          cachedConversations,
+          cachedConversations.otherParticipantImageUrl,
+        );
+      }
     },
   );
 
-  static const int _sessionRowId = 0;
+  static const int _settingsRowId = 0;
 
-  Future<({String access, String refresh})?> readSession() async {
+  Future<String?> readLanguageCode() async {
     final row = await (select(
-      authTokens,
-    )..where((t) => t.id.equals(_sessionRowId))).getSingleOrNull();
-    if (row == null) return null;
-    return (access: row.accessToken, refresh: row.refreshToken);
+      appSettings,
+    )..where((t) => t.id.equals(_settingsRowId))).getSingleOrNull();
+    return row?.languageCode;
   }
 
-  Future<void> saveSession(String access, String refresh) {
-    return into(authTokens).insertOnConflictUpdate(
-      AuthTokensCompanion.insert(
-        id: const Value(_sessionRowId),
-        accessToken: access,
-        refreshToken: refresh,
+  Future<void> saveLanguageCode(String code) {
+    return into(appSettings).insertOnConflictUpdate(
+      AppSettingsCompanion.insert(
+        id: const Value(_settingsRowId),
+        languageCode: Value(code),
       ),
     );
   }
-
-  Future<void> clearSession() => delete(authTokens).go();
 
   Stream<List<CachedConversation>> watchCachedConversations() {
     return (select(cachedConversations)..orderBy([

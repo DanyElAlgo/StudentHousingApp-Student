@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/utils/formatters.dart';
 import '../chat_formatters.dart';
+import '../chat_thread_args.dart';
 import '../providers/chat_providers.dart';
 import '../repository/models/chat_message.dart';
 
 class ChatThreadScreen extends ConsumerStatefulWidget {
-  const ChatThreadScreen({super.key, required this.chatId, this.title});
+  const ChatThreadScreen({super.key, required this.chatId, this.args});
 
   final int chatId;
-  final String? title;
+  final ChatThreadArgs? args;
 
   @override
   ConsumerState<ChatThreadScreen> createState() => _ChatThreadScreenState();
@@ -96,6 +99,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final messagesAsync = ref.watch(threadMessagesProvider(widget.chatId));
     final String? currentUserId = ref
         .watch(currentUserIdProvider)
@@ -109,8 +113,28 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       if (list != null) _markReadUpTo(list);
     });
 
+    final ChatThreadArgs? args = widget.args;
+    final String headerName = (args?.name.isNotEmpty ?? false)
+        ? args!.name
+        : l10n.chatThreadTitle;
+    final String headerImageUrl = args?.imageUrl ?? '';
+
     return AppScaffold(
-      appBar: AppBar(title: Text(widget.title ?? 'Chat')),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            AppAvatar(
+              radius: 16,
+              name: args?.name,
+              image: headerImageUrl.isEmpty
+                  ? null
+                  : NetworkImage(resolveImageUrl(headerImageUrl)),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(child: Text(headerName, overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           if (!connected) const _ConnectionBanner(),
@@ -134,7 +158,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
           AppMessageComposer(
             controller: _input,
             onSend: _send,
-            hintText: 'Message…',
+            hintText: l10n.chatMessageHint,
             enabled: connected && !_sending,
           ),
         ],
@@ -162,7 +186,7 @@ class _MessageList extends StatelessWidget {
       final text = Theme.of(context).textTheme;
       return Center(
         child: Text(
-          'No messages yet.\nSay hello!',
+          AppLocalizations.of(context).chatNoMessages,
           textAlign: TextAlign.center,
           style: text.bodyMedium?.copyWith(color: AppColors.onSurfaceVariant),
         ),
@@ -207,14 +231,33 @@ class _ConnectionBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final TextTheme text = Theme.of(context).textTheme;
-    return Container(
-      width: double.infinity,
-      color: colors.surfaceContainerHigh,
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Text(
-        'Reconnecting…',
-        textAlign: TextAlign.center,
-        style: text.labelMedium?.copyWith(color: colors.onSurfaceVariant),
+    return Material(
+      color: colors.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.wifi_off_rounded,
+              size: 18,
+              color: colors.onErrorContainer,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Flexible(
+              child: Text(
+                AppLocalizations.of(context).chatReconnecting,
+                textAlign: TextAlign.center,
+                style: text.labelMedium?.copyWith(
+                  color: colors.onErrorContainer,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

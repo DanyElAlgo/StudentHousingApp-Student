@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 import '../../rooms/constants/room_policies.dart';
 import '../../rooms/repository/models/room_policy.dart';
@@ -11,17 +12,18 @@ class RoomPoliciesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final TextTheme text = Theme.of(context).textTheme;
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AppSectionHeader(title: 'Policies'),
+        AppSectionHeader(title: l10n.detailsPolicies),
         const SizedBox(height: AppSpacing.sm),
         if (policies.isEmpty)
           Text(
-            'No policies listed.',
+            l10n.detailsNoPolicies,
             style: text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
           )
         else

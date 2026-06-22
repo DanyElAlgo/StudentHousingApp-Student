@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/responsive_layout.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../providers/profile_providers.dart';
 import '../repository/models/user_profile.dart';
+import '../widgets/language_selector.dart';
 import '../widgets/profile_edit_form.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_info_view.dart';
@@ -21,65 +24,81 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<UserProfile> profileAsync =
-        ref.watch(userProfileProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final AsyncValue<UserProfile> profileAsync = ref.watch(userProfileProvider);
+    final void Function(BuildContext)? changeRole =
+        ref.watch(changeRoleHookProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: RefreshIndicator(
-        onRefresh: () => ref.refresh(userProfileProvider.future),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.xl,
-            AppSpacing.lg,
-            AppSpacing.xxxl,
-          ),
-          children: [
-            ...profileAsync.when(
-              loading: () => const [
-                Padding(
-                  padding: EdgeInsets.only(top: AppSpacing.xxl),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-              error: (err, _) => [
-                _ProfileMessage(
-                  icon: Icons.cloud_off_outlined,
-                  message: '$err',
-                  onRetry: () => ref.invalidate(userProfileProvider),
-                ),
-              ],
-              data: (profile) => [
-                ProfileHeader(profile: profile),
-                const SizedBox(height: AppSpacing.xl),
-                if (_editing)
-                  ProfileEditForm(
-                    profile: profile,
-                    onCancel: () => setState(() => _editing = false),
-                    onSaved: () => setState(() => _editing = false),
-                  )
-                else ...[
-                  ProfileInfoView(profile: profile),
-                  const SizedBox(height: AppSpacing.xl),
-                  AppPrimaryButton(
-                    label: 'Edit profile',
-                    icon: Icons.edit_outlined,
-                    expanded: true,
-                    onPressed: () => setState(() => _editing = true),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppSecondaryButton(
-                    label: 'Log out',
-                    icon: Icons.logout,
-                    expanded: true,
-                    onPressed: () =>
-                        ref.read(authControllerProvider.notifier).logout(),
+      appBar: AppBar(title: Text(l10n.profileTitle)),
+      body: CenteredMaxWidth(
+        maxWidth: 600,
+        child: RefreshIndicator(
+          onRefresh: () => ref.refresh(userProfileProvider.future),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xxxl,
+            ),
+            children: [
+              ...profileAsync.when(
+                loading: () => const [
+                  Padding(
+                    padding: EdgeInsets.only(top: AppSpacing.xxl),
+                    child: Center(child: CircularProgressIndicator()),
                   ),
                 ],
-              ],
-            ),
-          ],
+                error: (err, _) => [
+                  _ProfileMessage(
+                    icon: Icons.cloud_off_outlined,
+                    message: '$err',
+                    onRetry: () => ref.invalidate(userProfileProvider),
+                  ),
+                ],
+                data: (profile) => [
+                  ProfileHeader(profile: profile),
+                  const SizedBox(height: AppSpacing.xl),
+                  if (_editing)
+                    ProfileEditForm(
+                      profile: profile,
+                      onCancel: () => setState(() => _editing = false),
+                      onSaved: () => setState(() => _editing = false),
+                    )
+                  else ...[
+                    ProfileInfoView(profile: profile),
+                    const SizedBox(height: AppSpacing.lg),
+                    const LanguageSelector(),
+                    const SizedBox(height: AppSpacing.xl),
+                    AppPrimaryButton(
+                      label: l10n.profileEditButton,
+                      icon: Icons.edit_outlined,
+                      expanded: true,
+                      onPressed: () => setState(() => _editing = true),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppSecondaryButton(
+                      label: l10n.profileLogout,
+                      icon: Icons.logout,
+                      expanded: true,
+                      onPressed: () =>
+                          ref.read(authControllerProvider.notifier).logout(),
+                    ),
+                    if (changeRole != null) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      AppSecondaryButton(
+                        label: l10n.profileChangeRole,
+                        icon: Icons.swap_horiz,
+                        expanded: true,
+                        onPressed: () => changeRole(context),
+                      ),
+                    ],
+                  ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -114,7 +133,7 @@ class _ProfileMessage extends StatelessWidget {
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.lg),
             AppSecondaryButton(
-              label: 'Retry',
+              label: AppLocalizations.of(context).commonRetry,
               icon: Icons.refresh,
               onPressed: onRetry,
             ),

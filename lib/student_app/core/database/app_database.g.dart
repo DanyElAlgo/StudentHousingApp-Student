@@ -3,264 +3,6 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $AuthTokensTable extends AuthTokens
-    with TableInfo<$AuthTokensTable, AuthToken> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $AuthTokensTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _accessTokenMeta = const VerificationMeta(
-    'accessToken',
-  );
-  @override
-  late final GeneratedColumn<String> accessToken = GeneratedColumn<String>(
-    'access_token',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _refreshTokenMeta = const VerificationMeta(
-    'refreshToken',
-  );
-  @override
-  late final GeneratedColumn<String> refreshToken = GeneratedColumn<String>(
-    'refresh_token',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, accessToken, refreshToken];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'auth_tokens';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<AuthToken> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('access_token')) {
-      context.handle(
-        _accessTokenMeta,
-        accessToken.isAcceptableOrUnknown(
-          data['access_token']!,
-          _accessTokenMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_accessTokenMeta);
-    }
-    if (data.containsKey('refresh_token')) {
-      context.handle(
-        _refreshTokenMeta,
-        refreshToken.isAcceptableOrUnknown(
-          data['refresh_token']!,
-          _refreshTokenMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_refreshTokenMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  AuthToken map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return AuthToken(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      accessToken: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}access_token'],
-      )!,
-      refreshToken: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}refresh_token'],
-      )!,
-    );
-  }
-
-  @override
-  $AuthTokensTable createAlias(String alias) {
-    return $AuthTokensTable(attachedDatabase, alias);
-  }
-}
-
-class AuthToken extends DataClass implements Insertable<AuthToken> {
-  final int id;
-  final String accessToken;
-  final String refreshToken;
-  const AuthToken({
-    required this.id,
-    required this.accessToken,
-    required this.refreshToken,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['access_token'] = Variable<String>(accessToken);
-    map['refresh_token'] = Variable<String>(refreshToken);
-    return map;
-  }
-
-  AuthTokensCompanion toCompanion(bool nullToAbsent) {
-    return AuthTokensCompanion(
-      id: Value(id),
-      accessToken: Value(accessToken),
-      refreshToken: Value(refreshToken),
-    );
-  }
-
-  factory AuthToken.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return AuthToken(
-      id: serializer.fromJson<int>(json['id']),
-      accessToken: serializer.fromJson<String>(json['accessToken']),
-      refreshToken: serializer.fromJson<String>(json['refreshToken']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'accessToken': serializer.toJson<String>(accessToken),
-      'refreshToken': serializer.toJson<String>(refreshToken),
-    };
-  }
-
-  AuthToken copyWith({int? id, String? accessToken, String? refreshToken}) =>
-      AuthToken(
-        id: id ?? this.id,
-        accessToken: accessToken ?? this.accessToken,
-        refreshToken: refreshToken ?? this.refreshToken,
-      );
-  AuthToken copyWithCompanion(AuthTokensCompanion data) {
-    return AuthToken(
-      id: data.id.present ? data.id.value : this.id,
-      accessToken: data.accessToken.present
-          ? data.accessToken.value
-          : this.accessToken,
-      refreshToken: data.refreshToken.present
-          ? data.refreshToken.value
-          : this.refreshToken,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AuthToken(')
-          ..write('id: $id, ')
-          ..write('accessToken: $accessToken, ')
-          ..write('refreshToken: $refreshToken')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, accessToken, refreshToken);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is AuthToken &&
-          other.id == this.id &&
-          other.accessToken == this.accessToken &&
-          other.refreshToken == this.refreshToken);
-}
-
-class AuthTokensCompanion extends UpdateCompanion<AuthToken> {
-  final Value<int> id;
-  final Value<String> accessToken;
-  final Value<String> refreshToken;
-  const AuthTokensCompanion({
-    this.id = const Value.absent(),
-    this.accessToken = const Value.absent(),
-    this.refreshToken = const Value.absent(),
-  });
-  AuthTokensCompanion.insert({
-    this.id = const Value.absent(),
-    required String accessToken,
-    required String refreshToken,
-  }) : accessToken = Value(accessToken),
-       refreshToken = Value(refreshToken);
-  static Insertable<AuthToken> custom({
-    Expression<int>? id,
-    Expression<String>? accessToken,
-    Expression<String>? refreshToken,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (accessToken != null) 'access_token': accessToken,
-      if (refreshToken != null) 'refresh_token': refreshToken,
-    });
-  }
-
-  AuthTokensCompanion copyWith({
-    Value<int>? id,
-    Value<String>? accessToken,
-    Value<String>? refreshToken,
-  }) {
-    return AuthTokensCompanion(
-      id: id ?? this.id,
-      accessToken: accessToken ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (accessToken.present) {
-      map['access_token'] = Variable<String>(accessToken.value);
-    }
-    if (refreshToken.present) {
-      map['refresh_token'] = Variable<String>(refreshToken.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('AuthTokensCompanion(')
-          ..write('id: $id, ')
-          ..write('accessToken: $accessToken, ')
-          ..write('refreshToken: $refreshToken')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $CachedConversationsTable extends CachedConversations
     with TableInfo<$CachedConversationsTable, CachedConversation> {
   @override
@@ -297,6 +39,18 @@ class $CachedConversationsTable extends CachedConversations
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
+      );
+  static const VerificationMeta _otherParticipantImageUrlMeta =
+      const VerificationMeta('otherParticipantImageUrl');
+  @override
+  late final GeneratedColumn<String> otherParticipantImageUrl =
+      GeneratedColumn<String>(
+        'other_participant_image_url',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
       );
   static const VerificationMeta _lastMessageMeta = const VerificationMeta(
     'lastMessage',
@@ -349,6 +103,7 @@ class $CachedConversationsTable extends CachedConversations
     chatId,
     otherParticipantId,
     otherParticipantName,
+    otherParticipantImageUrl,
     lastMessage,
     lastMessageAt,
     unreadCount,
@@ -393,6 +148,15 @@ class $CachedConversationsTable extends CachedConversations
       );
     } else if (isInserting) {
       context.missing(_otherParticipantNameMeta);
+    }
+    if (data.containsKey('other_participant_image_url')) {
+      context.handle(
+        _otherParticipantImageUrlMeta,
+        otherParticipantImageUrl.isAcceptableOrUnknown(
+          data['other_participant_image_url']!,
+          _otherParticipantImageUrlMeta,
+        ),
+      );
     }
     if (data.containsKey('last_message')) {
       context.handle(
@@ -450,6 +214,10 @@ class $CachedConversationsTable extends CachedConversations
         DriftSqlType.string,
         data['${effectivePrefix}other_participant_name'],
       )!,
+      otherParticipantImageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}other_participant_image_url'],
+      )!,
       lastMessage: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_message'],
@@ -480,6 +248,7 @@ class CachedConversation extends DataClass
   final int chatId;
   final String otherParticipantId;
   final String otherParticipantName;
+  final String otherParticipantImageUrl;
   final String? lastMessage;
   final DateTime? lastMessageAt;
   final int unreadCount;
@@ -488,6 +257,7 @@ class CachedConversation extends DataClass
     required this.chatId,
     required this.otherParticipantId,
     required this.otherParticipantName,
+    required this.otherParticipantImageUrl,
     this.lastMessage,
     this.lastMessageAt,
     required this.unreadCount,
@@ -499,6 +269,9 @@ class CachedConversation extends DataClass
     map['chat_id'] = Variable<int>(chatId);
     map['other_participant_id'] = Variable<String>(otherParticipantId);
     map['other_participant_name'] = Variable<String>(otherParticipantName);
+    map['other_participant_image_url'] = Variable<String>(
+      otherParticipantImageUrl,
+    );
     if (!nullToAbsent || lastMessage != null) {
       map['last_message'] = Variable<String>(lastMessage);
     }
@@ -515,6 +288,7 @@ class CachedConversation extends DataClass
       chatId: Value(chatId),
       otherParticipantId: Value(otherParticipantId),
       otherParticipantName: Value(otherParticipantName),
+      otherParticipantImageUrl: Value(otherParticipantImageUrl),
       lastMessage: lastMessage == null && nullToAbsent
           ? const Value.absent()
           : Value(lastMessage),
@@ -539,6 +313,9 @@ class CachedConversation extends DataClass
       otherParticipantName: serializer.fromJson<String>(
         json['otherParticipantName'],
       ),
+      otherParticipantImageUrl: serializer.fromJson<String>(
+        json['otherParticipantImageUrl'],
+      ),
       lastMessage: serializer.fromJson<String?>(json['lastMessage']),
       lastMessageAt: serializer.fromJson<DateTime?>(json['lastMessageAt']),
       unreadCount: serializer.fromJson<int>(json['unreadCount']),
@@ -552,6 +329,9 @@ class CachedConversation extends DataClass
       'chatId': serializer.toJson<int>(chatId),
       'otherParticipantId': serializer.toJson<String>(otherParticipantId),
       'otherParticipantName': serializer.toJson<String>(otherParticipantName),
+      'otherParticipantImageUrl': serializer.toJson<String>(
+        otherParticipantImageUrl,
+      ),
       'lastMessage': serializer.toJson<String?>(lastMessage),
       'lastMessageAt': serializer.toJson<DateTime?>(lastMessageAt),
       'unreadCount': serializer.toJson<int>(unreadCount),
@@ -563,6 +343,7 @@ class CachedConversation extends DataClass
     int? chatId,
     String? otherParticipantId,
     String? otherParticipantName,
+    String? otherParticipantImageUrl,
     Value<String?> lastMessage = const Value.absent(),
     Value<DateTime?> lastMessageAt = const Value.absent(),
     int? unreadCount,
@@ -571,6 +352,8 @@ class CachedConversation extends DataClass
     chatId: chatId ?? this.chatId,
     otherParticipantId: otherParticipantId ?? this.otherParticipantId,
     otherParticipantName: otherParticipantName ?? this.otherParticipantName,
+    otherParticipantImageUrl:
+        otherParticipantImageUrl ?? this.otherParticipantImageUrl,
     lastMessage: lastMessage.present ? lastMessage.value : this.lastMessage,
     lastMessageAt: lastMessageAt.present
         ? lastMessageAt.value
@@ -587,6 +370,9 @@ class CachedConversation extends DataClass
       otherParticipantName: data.otherParticipantName.present
           ? data.otherParticipantName.value
           : this.otherParticipantName,
+      otherParticipantImageUrl: data.otherParticipantImageUrl.present
+          ? data.otherParticipantImageUrl.value
+          : this.otherParticipantImageUrl,
       lastMessage: data.lastMessage.present
           ? data.lastMessage.value
           : this.lastMessage,
@@ -606,6 +392,7 @@ class CachedConversation extends DataClass
           ..write('chatId: $chatId, ')
           ..write('otherParticipantId: $otherParticipantId, ')
           ..write('otherParticipantName: $otherParticipantName, ')
+          ..write('otherParticipantImageUrl: $otherParticipantImageUrl, ')
           ..write('lastMessage: $lastMessage, ')
           ..write('lastMessageAt: $lastMessageAt, ')
           ..write('unreadCount: $unreadCount, ')
@@ -619,6 +406,7 @@ class CachedConversation extends DataClass
     chatId,
     otherParticipantId,
     otherParticipantName,
+    otherParticipantImageUrl,
     lastMessage,
     lastMessageAt,
     unreadCount,
@@ -631,6 +419,7 @@ class CachedConversation extends DataClass
           other.chatId == this.chatId &&
           other.otherParticipantId == this.otherParticipantId &&
           other.otherParticipantName == this.otherParticipantName &&
+          other.otherParticipantImageUrl == this.otherParticipantImageUrl &&
           other.lastMessage == this.lastMessage &&
           other.lastMessageAt == this.lastMessageAt &&
           other.unreadCount == this.unreadCount &&
@@ -641,6 +430,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
   final Value<int> chatId;
   final Value<String> otherParticipantId;
   final Value<String> otherParticipantName;
+  final Value<String> otherParticipantImageUrl;
   final Value<String?> lastMessage;
   final Value<DateTime?> lastMessageAt;
   final Value<int> unreadCount;
@@ -649,6 +439,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     this.chatId = const Value.absent(),
     this.otherParticipantId = const Value.absent(),
     this.otherParticipantName = const Value.absent(),
+    this.otherParticipantImageUrl = const Value.absent(),
     this.lastMessage = const Value.absent(),
     this.lastMessageAt = const Value.absent(),
     this.unreadCount = const Value.absent(),
@@ -658,6 +449,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     this.chatId = const Value.absent(),
     required String otherParticipantId,
     required String otherParticipantName,
+    this.otherParticipantImageUrl = const Value.absent(),
     this.lastMessage = const Value.absent(),
     this.lastMessageAt = const Value.absent(),
     this.unreadCount = const Value.absent(),
@@ -669,6 +461,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     Expression<int>? chatId,
     Expression<String>? otherParticipantId,
     Expression<String>? otherParticipantName,
+    Expression<String>? otherParticipantImageUrl,
     Expression<String>? lastMessage,
     Expression<DateTime>? lastMessageAt,
     Expression<int>? unreadCount,
@@ -680,6 +473,8 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
         'other_participant_id': otherParticipantId,
       if (otherParticipantName != null)
         'other_participant_name': otherParticipantName,
+      if (otherParticipantImageUrl != null)
+        'other_participant_image_url': otherParticipantImageUrl,
       if (lastMessage != null) 'last_message': lastMessage,
       if (lastMessageAt != null) 'last_message_at': lastMessageAt,
       if (unreadCount != null) 'unread_count': unreadCount,
@@ -691,6 +486,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     Value<int>? chatId,
     Value<String>? otherParticipantId,
     Value<String>? otherParticipantName,
+    Value<String>? otherParticipantImageUrl,
     Value<String?>? lastMessage,
     Value<DateTime?>? lastMessageAt,
     Value<int>? unreadCount,
@@ -700,6 +496,8 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
       chatId: chatId ?? this.chatId,
       otherParticipantId: otherParticipantId ?? this.otherParticipantId,
       otherParticipantName: otherParticipantName ?? this.otherParticipantName,
+      otherParticipantImageUrl:
+          otherParticipantImageUrl ?? this.otherParticipantImageUrl,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageAt: lastMessageAt ?? this.lastMessageAt,
       unreadCount: unreadCount ?? this.unreadCount,
@@ -719,6 +517,11 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
     if (otherParticipantName.present) {
       map['other_participant_name'] = Variable<String>(
         otherParticipantName.value,
+      );
+    }
+    if (otherParticipantImageUrl.present) {
+      map['other_participant_image_url'] = Variable<String>(
+        otherParticipantImageUrl.value,
       );
     }
     if (lastMessage.present) {
@@ -742,6 +545,7 @@ class CachedConversationsCompanion extends UpdateCompanion<CachedConversation> {
           ..write('chatId: $chatId, ')
           ..write('otherParticipantId: $otherParticipantId, ')
           ..write('otherParticipantName: $otherParticipantName, ')
+          ..write('otherParticipantImageUrl: $otherParticipantImageUrl, ')
           ..write('lastMessage: $lastMessage, ')
           ..write('lastMessageAt: $lastMessageAt, ')
           ..write('unreadCount: $unreadCount, ')
@@ -1147,186 +951,239 @@ class CachedMessagesCompanion extends UpdateCompanion<CachedMessage> {
   }
 }
 
+class $AppSettingsTable extends AppSettings
+    with TableInfo<$AppSettingsTable, AppSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _languageCodeMeta = const VerificationMeta(
+    'languageCode',
+  );
+  @override
+  late final GeneratedColumn<String> languageCode = GeneratedColumn<String>(
+    'language_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, languageCode];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('language_code')) {
+      context.handle(
+        _languageCodeMeta,
+        languageCode.isAcceptableOrUnknown(
+          data['language_code']!,
+          _languageCodeMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AppSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      languageCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language_code'],
+      ),
+    );
+  }
+
+  @override
+  $AppSettingsTable createAlias(String alias) {
+    return $AppSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class AppSetting extends DataClass implements Insertable<AppSetting> {
+  final int id;
+  final String? languageCode;
+  const AppSetting({required this.id, this.languageCode});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || languageCode != null) {
+      map['language_code'] = Variable<String>(languageCode);
+    }
+    return map;
+  }
+
+  AppSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AppSettingsCompanion(
+      id: Value(id),
+      languageCode: languageCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(languageCode),
+    );
+  }
+
+  factory AppSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppSetting(
+      id: serializer.fromJson<int>(json['id']),
+      languageCode: serializer.fromJson<String?>(json['languageCode']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'languageCode': serializer.toJson<String?>(languageCode),
+    };
+  }
+
+  AppSetting copyWith({
+    int? id,
+    Value<String?> languageCode = const Value.absent(),
+  }) => AppSetting(
+    id: id ?? this.id,
+    languageCode: languageCode.present ? languageCode.value : this.languageCode,
+  );
+  AppSetting copyWithCompanion(AppSettingsCompanion data) {
+    return AppSetting(
+      id: data.id.present ? data.id.value : this.id,
+      languageCode: data.languageCode.present
+          ? data.languageCode.value
+          : this.languageCode,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSetting(')
+          ..write('id: $id, ')
+          ..write('languageCode: $languageCode')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, languageCode);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppSetting &&
+          other.id == this.id &&
+          other.languageCode == this.languageCode);
+}
+
+class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
+  final Value<int> id;
+  final Value<String?> languageCode;
+  const AppSettingsCompanion({
+    this.id = const Value.absent(),
+    this.languageCode = const Value.absent(),
+  });
+  AppSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.languageCode = const Value.absent(),
+  });
+  static Insertable<AppSetting> custom({
+    Expression<int>? id,
+    Expression<String>? languageCode,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (languageCode != null) 'language_code': languageCode,
+    });
+  }
+
+  AppSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? languageCode,
+  }) {
+    return AppSettingsCompanion(
+      id: id ?? this.id,
+      languageCode: languageCode ?? this.languageCode,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (languageCode.present) {
+      map['language_code'] = Variable<String>(languageCode.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('languageCode: $languageCode')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $AuthTokensTable authTokens = $AuthTokensTable(this);
   late final $CachedConversationsTable cachedConversations =
       $CachedConversationsTable(this);
   late final $CachedMessagesTable cachedMessages = $CachedMessagesTable(this);
+  late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-    authTokens,
     cachedConversations,
     cachedMessages,
+    appSettings,
   ];
 }
 
-typedef $$AuthTokensTableCreateCompanionBuilder =
-    AuthTokensCompanion Function({
-      Value<int> id,
-      required String accessToken,
-      required String refreshToken,
-    });
-typedef $$AuthTokensTableUpdateCompanionBuilder =
-    AuthTokensCompanion Function({
-      Value<int> id,
-      Value<String> accessToken,
-      Value<String> refreshToken,
-    });
-
-class $$AuthTokensTableFilterComposer
-    extends Composer<_$AppDatabase, $AuthTokensTable> {
-  $$AuthTokensTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get accessToken => $composableBuilder(
-    column: $table.accessToken,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get refreshToken => $composableBuilder(
-    column: $table.refreshToken,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$AuthTokensTableOrderingComposer
-    extends Composer<_$AppDatabase, $AuthTokensTable> {
-  $$AuthTokensTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get accessToken => $composableBuilder(
-    column: $table.accessToken,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get refreshToken => $composableBuilder(
-    column: $table.refreshToken,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$AuthTokensTableAnnotationComposer
-    extends Composer<_$AppDatabase, $AuthTokensTable> {
-  $$AuthTokensTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get accessToken => $composableBuilder(
-    column: $table.accessToken,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get refreshToken => $composableBuilder(
-    column: $table.refreshToken,
-    builder: (column) => column,
-  );
-}
-
-class $$AuthTokensTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $AuthTokensTable,
-          AuthToken,
-          $$AuthTokensTableFilterComposer,
-          $$AuthTokensTableOrderingComposer,
-          $$AuthTokensTableAnnotationComposer,
-          $$AuthTokensTableCreateCompanionBuilder,
-          $$AuthTokensTableUpdateCompanionBuilder,
-          (
-            AuthToken,
-            BaseReferences<_$AppDatabase, $AuthTokensTable, AuthToken>,
-          ),
-          AuthToken,
-          PrefetchHooks Function()
-        > {
-  $$AuthTokensTableTableManager(_$AppDatabase db, $AuthTokensTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$AuthTokensTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$AuthTokensTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$AuthTokensTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> accessToken = const Value.absent(),
-                Value<String> refreshToken = const Value.absent(),
-              }) => AuthTokensCompanion(
-                id: id,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required String accessToken,
-                required String refreshToken,
-              }) => AuthTokensCompanion.insert(
-                id: id,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$AuthTokensTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $AuthTokensTable,
-      AuthToken,
-      $$AuthTokensTableFilterComposer,
-      $$AuthTokensTableOrderingComposer,
-      $$AuthTokensTableAnnotationComposer,
-      $$AuthTokensTableCreateCompanionBuilder,
-      $$AuthTokensTableUpdateCompanionBuilder,
-      (AuthToken, BaseReferences<_$AppDatabase, $AuthTokensTable, AuthToken>),
-      AuthToken,
-      PrefetchHooks Function()
-    >;
 typedef $$CachedConversationsTableCreateCompanionBuilder =
     CachedConversationsCompanion Function({
       Value<int> chatId,
       required String otherParticipantId,
       required String otherParticipantName,
+      Value<String> otherParticipantImageUrl,
       Value<String?> lastMessage,
       Value<DateTime?> lastMessageAt,
       Value<int> unreadCount,
@@ -1337,6 +1194,7 @@ typedef $$CachedConversationsTableUpdateCompanionBuilder =
       Value<int> chatId,
       Value<String> otherParticipantId,
       Value<String> otherParticipantName,
+      Value<String> otherParticipantImageUrl,
       Value<String?> lastMessage,
       Value<DateTime?> lastMessageAt,
       Value<int> unreadCount,
@@ -1364,6 +1222,11 @@ class $$CachedConversationsTableFilterComposer
 
   ColumnFilters<String> get otherParticipantName => $composableBuilder(
     column: $table.otherParticipantName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1412,6 +1275,11 @@ class $$CachedConversationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get lastMessage => $composableBuilder(
     column: $table.lastMessage,
     builder: (column) => ColumnOrderings(column),
@@ -1452,6 +1320,11 @@ class $$CachedConversationsTableAnnotationComposer
 
   GeneratedColumn<String> get otherParticipantName => $composableBuilder(
     column: $table.otherParticipantName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get otherParticipantImageUrl => $composableBuilder(
+    column: $table.otherParticipantImageUrl,
     builder: (column) => column,
   );
 
@@ -1520,6 +1393,7 @@ class $$CachedConversationsTableTableManager
                 Value<int> chatId = const Value.absent(),
                 Value<String> otherParticipantId = const Value.absent(),
                 Value<String> otherParticipantName = const Value.absent(),
+                Value<String> otherParticipantImageUrl = const Value.absent(),
                 Value<String?> lastMessage = const Value.absent(),
                 Value<DateTime?> lastMessageAt = const Value.absent(),
                 Value<int> unreadCount = const Value.absent(),
@@ -1528,6 +1402,7 @@ class $$CachedConversationsTableTableManager
                 chatId: chatId,
                 otherParticipantId: otherParticipantId,
                 otherParticipantName: otherParticipantName,
+                otherParticipantImageUrl: otherParticipantImageUrl,
                 lastMessage: lastMessage,
                 lastMessageAt: lastMessageAt,
                 unreadCount: unreadCount,
@@ -1538,6 +1413,7 @@ class $$CachedConversationsTableTableManager
                 Value<int> chatId = const Value.absent(),
                 required String otherParticipantId,
                 required String otherParticipantName,
+                Value<String> otherParticipantImageUrl = const Value.absent(),
                 Value<String?> lastMessage = const Value.absent(),
                 Value<DateTime?> lastMessageAt = const Value.absent(),
                 Value<int> unreadCount = const Value.absent(),
@@ -1546,6 +1422,7 @@ class $$CachedConversationsTableTableManager
                 chatId: chatId,
                 otherParticipantId: otherParticipantId,
                 otherParticipantName: otherParticipantName,
+                otherParticipantImageUrl: otherParticipantImageUrl,
                 lastMessage: lastMessage,
                 lastMessageAt: lastMessageAt,
                 unreadCount: unreadCount,
@@ -1797,14 +1674,144 @@ typedef $$CachedMessagesTableProcessedTableManager =
       CachedMessage,
       PrefetchHooks Function()
     >;
+typedef $$AppSettingsTableCreateCompanionBuilder =
+    AppSettingsCompanion Function({Value<int> id, Value<String?> languageCode});
+typedef $$AppSettingsTableUpdateCompanionBuilder =
+    AppSettingsCompanion Function({Value<int> id, Value<String?> languageCode});
+
+class $$AppSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppSettingsTable> {
+  $$AppSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get languageCode => $composableBuilder(
+    column: $table.languageCode,
+    builder: (column) => column,
+  );
+}
+
+class $$AppSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppSettingsTable,
+          AppSetting,
+          $$AppSettingsTableFilterComposer,
+          $$AppSettingsTableOrderingComposer,
+          $$AppSettingsTableAnnotationComposer,
+          $$AppSettingsTableCreateCompanionBuilder,
+          $$AppSettingsTableUpdateCompanionBuilder,
+          (
+            AppSetting,
+            BaseReferences<_$AppDatabase, $AppSettingsTable, AppSetting>,
+          ),
+          AppSetting,
+          PrefetchHooks Function()
+        > {
+  $$AppSettingsTableTableManager(_$AppDatabase db, $AppSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> languageCode = const Value.absent(),
+              }) => AppSettingsCompanion(id: id, languageCode: languageCode),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> languageCode = const Value.absent(),
+              }) => AppSettingsCompanion.insert(
+                id: id,
+                languageCode: languageCode,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppSettingsTable,
+      AppSetting,
+      $$AppSettingsTableFilterComposer,
+      $$AppSettingsTableOrderingComposer,
+      $$AppSettingsTableAnnotationComposer,
+      $$AppSettingsTableCreateCompanionBuilder,
+      $$AppSettingsTableUpdateCompanionBuilder,
+      (
+        AppSetting,
+        BaseReferences<_$AppDatabase, $AppSettingsTable, AppSetting>,
+      ),
+      AppSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$AuthTokensTableTableManager get authTokens =>
-      $$AuthTokensTableTableManager(_db, _db.authTokens);
   $$CachedConversationsTableTableManager get cachedConversations =>
       $$CachedConversationsTableTableManager(_db, _db.cachedConversations);
   $$CachedMessagesTableTableManager get cachedMessages =>
       $$CachedMessagesTableTableManager(_db, _db.cachedMessages);
+  $$AppSettingsTableTableManager get appSettings =>
+      $$AppSettingsTableTableManager(_db, _db.appSettings);
 }

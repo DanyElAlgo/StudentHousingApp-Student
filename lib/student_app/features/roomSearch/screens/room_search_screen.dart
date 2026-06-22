@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/responsive_layout.dart';
 import '../../rooms/repository/models/room.dart';
 import '../../rooms/widgets/room_card.dart';
 import '../providers/room_search_providers.dart';
@@ -38,11 +40,9 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
     _max.text = max;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(roomSearchControllerProvider.notifier).applyFilters(
-            name: name,
-            minPrice: min,
-            maxPrice: max,
-          );
+      ref
+          .read(roomSearchControllerProvider.notifier)
+          .applyFilters(name: name, minPrice: min, maxPrice: max);
     });
   }
 
@@ -64,44 +64,47 @@ class _RoomSearchScreenState extends ConsumerState<RoomSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final state = ref.watch(roomSearchControllerProvider);
     final controller = ref.read(roomSearchControllerProvider.notifier);
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Find a room')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.lg,
-          AppSpacing.lg,
-          AppSpacing.xxxl,
+      appBar: AppBar(title: Text(l10n.searchTitle)),
+      body: CenteredMaxWidth(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.xxxl,
+          ),
+          children: [
+            AppSearchBar(
+              controller: _name,
+              hintText: l10n.homeSearchHint,
+              onSubmitted: (_) => _runSearch(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            PriceRangeFilter(minController: _min, maxController: _max),
+            const SizedBox(height: AppSpacing.lg),
+            ServiceFilterChips(
+              selectedIds: state.serviceIds,
+              onToggle: controller.toggleService,
+              onClear: controller.clearServices,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SortDropdown(value: state.sort, onChanged: controller.setSort),
+            const SizedBox(height: AppSpacing.lg),
+            AppPrimaryButton(
+              label: l10n.searchButton,
+              icon: Icons.search,
+              expanded: true,
+              onPressed: _runSearch,
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            _Results(results: state.results),
+          ],
         ),
-        children: [
-          AppSearchBar(
-            controller: _name,
-            hintText: 'Search rooms by name',
-            onSubmitted: (_) => _runSearch(),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          PriceRangeFilter(minController: _min, maxController: _max),
-          const SizedBox(height: AppSpacing.lg),
-          ServiceFilterChips(
-            selectedIds: state.serviceIds,
-            onToggle: controller.toggleService,
-            onClear: controller.clearServices,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          SortDropdown(value: state.sort, onChanged: controller.setSort),
-          const SizedBox(height: AppSpacing.lg),
-          AppPrimaryButton(
-            label: 'Search',
-            icon: Icons.search,
-            expanded: true,
-            onPressed: _runSearch,
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          _Results(results: state.results),
-        ],
       ),
     );
   }
@@ -114,6 +117,7 @@ class _Results extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final TextTheme text = Theme.of(context).textTheme;
     final ColorScheme colors = Theme.of(context).colorScheme;
 
@@ -126,7 +130,11 @@ class _Results extends StatelessWidget {
         padding: const EdgeInsets.only(top: AppSpacing.xxl),
         child: Column(
           children: [
-            Icon(Icons.cloud_off_outlined, size: 48, color: colors.onSurfaceVariant),
+            Icon(
+              Icons.cloud_off_outlined,
+              size: 48,
+              color: colors.onSurfaceVariant,
+            ),
             const SizedBox(height: AppSpacing.md),
             Text(
               '$err',
@@ -149,8 +157,10 @@ class _Results extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'No rooms match your filters.',
-                  style: text.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+                  l10n.searchNoResults,
+                  style: text.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -160,14 +170,13 @@ class _Results extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              rooms.length == 1 ? '1 room found' : '${rooms.length} rooms found',
+              l10n.searchResultsCount(rooms.length),
               style: text.titleSmall?.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: AppSpacing.md),
-            for (final room in rooms) ...[
-              RoomCard(room: room),
-              const SizedBox(height: AppSpacing.md),
-            ],
+            ResponsiveCardGrid(
+              children: [for (final room in rooms) RoomCard(room: room)],
+            ),
           ],
         );
       },

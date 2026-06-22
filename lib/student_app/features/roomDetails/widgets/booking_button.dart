@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
 class BookingButton extends StatelessWidget {
   const BookingButton({
@@ -19,6 +20,7 @@ class BookingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     if (hasBooking) {
@@ -38,21 +40,21 @@ class BookingButton extends StatelessWidget {
                     color: colors.onError,
                   ),
                 )
-              : const Text('Cancel request'),
+              : Text(l10n.detailsCancelRequest),
         ),
       );
     }
 
     if (!available) {
-      return const AppPrimaryButton(
-        label: 'Booking unavailable',
+      return AppPrimaryButton(
+        label: l10n.detailsBookingUnavailable,
         expanded: true,
         onPressed: null,
       );
     }
 
     return AppPrimaryButton(
-      label: 'Book room',
+      label: l10n.detailsBookRoom,
       icon: Icons.event_available,
       expanded: true,
       isLoading: isSubmitting,

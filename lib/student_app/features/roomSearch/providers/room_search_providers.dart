@@ -5,15 +5,7 @@ import '../../rooms/providers/room_providers.dart';
 import '../../rooms/repository/models/room.dart';
 import '../../rooms/repository/room_repository.dart';
 
-enum RoomSort {
-  priceAsc('Price (low to high)'),
-  priceDesc('Price (high to low)'),
-  nameAsc('Name (A–Z)'),
-  nameDesc('Name (Z–A)');
-
-  const RoomSort(this.label);
-  final String label;
-}
+enum RoomSort { priceAsc, priceDesc, nameAsc, nameDesc }
 
 @immutable
 class RoomSearchState {

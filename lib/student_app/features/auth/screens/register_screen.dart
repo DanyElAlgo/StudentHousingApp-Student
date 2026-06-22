@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
+import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../../core/widgets/app_feedback.dart';
 import '../providers/auth_providers.dart';
 import '../repository/models/register_dto.dart';
 import '../widgets/auth_validators.dart';
@@ -30,7 +32,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   DateTime? _birthDate;
   bool _obscure = true;
 
-  static const _genders = ['Masculino', 'Femenino', 'Otro'];
+  static const _genderValues = ['Male', 'Female', 'Other'];
+
+  String _genderLabel(AppLocalizations l10n, String value) {
+    switch (value) {
+      case 'Male':
+        return l10n.authGenderMale;
+      case 'Female':
+        return l10n.authGenderFemale;
+      default:
+        return l10n.authGenderOther;
+    }
+  }
 
   @override
   void dispose() {
@@ -67,6 +80,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _submit() async {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     FocusScope.of(context).unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -84,26 +98,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final created = await ref.read(authControllerProvider.notifier).register(dto);
     if (!created || !mounted) return;
 
-    await showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Account created'),
-        content: const Text(
-          'Check your email to confirm your account, then log in.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+    await showAppFeedback(
+      context,
+      kind: FeedbackKind.success,
+      title: l10n.authAccountCreatedTitle,
+      message: l10n.authAccountCreatedBody,
+      actionLabel: l10n.commonOk,
     );
     if (mounted) context.go('/login');
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final isBusy = ref.watch(authControllerProvider.select((s) => s.isBusy));
 
     ref.listen(authControllerProvider.select((s) => s.errorMessage), (_, msg) {
@@ -116,7 +123,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
 
     return AppScaffold(
-      appBar: AppBar(title: const Text('Create account')),
+      appBar: AppBar(title: Text(l10n.authCreateAccountTitle)),
       padded: true,
       body: Center(
         child: ConstrainedBox(
@@ -129,7 +136,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 children: [
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    'Join as a student to browse and book rooms.',
+                    l10n.authRegisterSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColors.onSurfaceVariant,
                     ),
@@ -141,20 +148,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Expanded(
                         child: AppTextField(
                           controller: _firstName,
-                          label: 'First name',
+                          label: l10n.authFirstNameLabel,
                           textInputAction: TextInputAction.next,
-                          validator: (v) =>
-                              AuthValidators.required(v, 'first name'),
+                          validator: (v) => AuthValidators.requiredField(
+                            v,
+                            l10n.authValidatorFirstNameRequired,
+                          ),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: AppTextField(
                           controller: _lastName,
-                          label: 'Last name',
+                          label: l10n.authLastNameLabel,
                           textInputAction: TextInputAction.next,
-                          validator: (v) =>
-                              AuthValidators.required(v, 'last name'),
+                          validator: (v) => AuthValidators.requiredField(
+                            v,
+                            l10n.authValidatorLastNameRequired,
+                          ),
                         ),
                       ),
                     ],
@@ -162,62 +173,69 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _email,
-                    label: 'Email',
-                    hintText: 'you@example.com',
+                    label: l10n.authEmailLabel,
+                    hintText: l10n.authEmailHint,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     prefixIcon: Icons.mail_outline,
-                    validator: AuthValidators.email,
+                    validator: (v) => AuthValidators.email(v, l10n),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _phone,
-                    label: 'Phone number',
+                    label: l10n.authPhoneLabel,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     prefixIcon: Icons.phone_outlined,
-                    validator: AuthValidators.phone,
+                    validator: (v) => AuthValidators.phone(v, l10n),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _nationality,
-                    label: 'Nationality',
+                    label: l10n.authNationalityLabel,
                     textInputAction: TextInputAction.next,
                     prefixIcon: Icons.public_outlined,
-                    validator: (v) => AuthValidators.required(v, 'nationality'),
+                    validator: (v) => AuthValidators.requiredField(
+                      v,
+                      l10n.authValidatorNationalityRequired,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   DropdownButtonFormField<String>(
                     initialValue: _gender,
-                    decoration: const InputDecoration(labelText: 'Gender'),
+                    decoration: InputDecoration(labelText: l10n.authGenderLabel),
                     items: [
-                      for (final g in _genders)
-                        DropdownMenuItem(value: g, child: Text(g)),
+                      for (final g in _genderValues)
+                        DropdownMenuItem(
+                          value: g,
+                          child: Text(_genderLabel(l10n, g)),
+                        ),
                     ],
                     onChanged: (v) => setState(() => _gender = v),
-                    validator: (v) => v == null ? 'Select your gender' : null,
+                    validator: (v) =>
+                        v == null ? l10n.authSelectGender : null,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   TextFormField(
                     controller: _birthDateField,
                     readOnly: true,
                     onTap: _pickBirthDate,
-                    decoration: const InputDecoration(
-                      labelText: 'Birth date',
-                      hintText: 'yyyy-mm-dd',
-                      suffixIcon: Icon(Icons.calendar_today_outlined),
+                    decoration: InputDecoration(
+                      labelText: l10n.authBirthDateLabel,
+                      hintText: l10n.authBirthDateHint,
+                      suffixIcon: const Icon(Icons.calendar_today_outlined),
                     ),
                     validator: (_) =>
-                        _birthDate == null ? 'Select your birth date' : null,
+                        _birthDate == null ? l10n.authSelectBirthDate : null,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _password,
-                    label: 'Password',
+                    label: l10n.authPasswordLabel,
                     obscureText: _obscure,
                     textInputAction: TextInputAction.next,
                     prefixIcon: Icons.lock_outline,
-                    validator: AuthValidators.password,
+                    validator: (v) => AuthValidators.password(v, l10n),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscure
@@ -230,18 +248,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   AppTextField(
                     controller: _confirmPassword,
-                    label: 'Confirm password',
+                    label: l10n.authConfirmPasswordLabel,
                     obscureText: _obscure,
                     textInputAction: TextInputAction.done,
                     prefixIcon: Icons.lock_outline,
                     onFieldSubmitted: (_) => _submit(),
                     validator: (v) => v != _password.text
-                        ? 'Passwords do not match'
+                        ? l10n.authPasswordsDoNotMatch
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   AppPrimaryButton(
-                    label: 'Create account',
+                    label: l10n.authCreateAccountButton,
                     expanded: true,
                     isLoading: isBusy,
                     onPressed: _submit,
@@ -253,11 +271,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Already have an account?',
+                        l10n.authAlreadyHaveAccount,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       AppTextButton(
-                        label: 'Log in',
+                        label: l10n.authLoginButton,
                         onPressed: () => context.go('/login'),
                       ),
                     ],
