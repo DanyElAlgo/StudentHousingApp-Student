@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:signalr_netcore/signalr_client.dart';
 
-import '../../../core/config/app_config.dart';
+import 'package:housing_core/housing_core.dart';
 import 'models/chat_message.dart';
 
 class ChatRealtimeService {
@@ -18,7 +18,8 @@ class ChatRealtimeService {
       StreamController<ChatMessage>.broadcast();
   final StreamController<String> _errors = StreamController<String>.broadcast();
   final StreamController<bool> _connected = StreamController<bool>.broadcast();
-  final StreamController<void> _reconnected = StreamController<void>.broadcast();
+  final StreamController<void> _reconnected =
+      StreamController<void>.broadcast();
 
   bool _isConnected = false;
 
@@ -40,7 +41,7 @@ class ChatRealtimeService {
 
   bool get isConnected => _isConnected;
 
-  String get _hubUrl => '${AppConfig.apiBaseUrl}/hubs/chat';
+  String get _hubUrl => '${AppConfig.baseUrl}/hubs/chat';
 
   Future<void> start() {
     if (_isConnected) return Future.value();
