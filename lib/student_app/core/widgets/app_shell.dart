@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
+import '../../features/bookings/providers/booking_providers.dart';
 import '../../features/chat/providers/chat_providers.dart';
+import '../../features/rooms/providers/room_providers.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.navigationShell});
@@ -44,10 +46,18 @@ class AppShell extends ConsumerWidget {
       ),
     ];
 
-    void onSelected(int index) => navigationShell.goBranch(
-      index,
-      initialLocation: index == navigationShell.currentIndex,
-    );
+    void onSelected(int index) {
+      navigationShell.goBranch(
+        index,
+        initialLocation: index == navigationShell.currentIndex,
+      );
+      switch (index) {
+        case 0:
+          ref.invalidate(featuredRoomsProvider);
+        case 3:
+          ref.invalidate(studentBookingsProvider);
+      }
+    }
 
     if (Breakpoints.isCompact(context)) {
       return AppScaffold(
