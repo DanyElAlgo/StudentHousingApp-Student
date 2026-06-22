@@ -8,6 +8,7 @@ import 'package:housing_core/housing_core.dart';
 
 import '../../../core/auth/google_auth_service.dart';
 import '../../../core/database/app_database.dart';
+import '../../chat/providers/chat_providers.dart' show currentUserIdProvider;
 import '../repository/auth_repository.dart';
 import '../repository/models/register_dto.dart';
 
@@ -74,6 +75,11 @@ class AuthController extends Notifier<AuthState> {
   AppDatabase get _db => ref.read(databaseProvider);
   AuthRepository get _repo => ref.read(authRepositoryProvider);
 
+  Future<void> _resetChatState() async {
+    await _db.clearChatData();
+    ref.invalidate(currentUserIdProvider);
+  }
+
   Future<void> _restoreSession() async {
     final hasSession = await _tokenStorage.hasTokens();
     state = AuthState(
@@ -90,6 +96,7 @@ class AuthController extends Notifier<AuthState> {
         accessToken: creds.accessToken,
         refreshToken: creds.refreshToken,
       );
+      await _resetChatState();
       state = const AuthState(status: AuthStatus.authenticated);
     } on AuthException catch (e) {
       state = AuthState(status: AuthStatus.unauthenticated, errorMessage: e.message);
@@ -144,6 +151,7 @@ class AuthController extends Notifier<AuthState> {
         accessToken: creds.accessToken,
         refreshToken: creds.refreshToken,
       );
+      await _resetChatState();
       state = const AuthState(status: AuthStatus.authenticated);
     } on AuthException catch (e) {
       state = AuthState(status: state.status, errorMessage: e.message);
@@ -154,7 +162,7 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> logout() async {
     await _tokenStorage.clear();
-    await _db.clearChatData();
+    await _resetChatState();
     try {
       await GoogleAuthService.instance.signOut();
     } catch (_) {}
@@ -163,6 +171,7 @@ class AuthController extends Notifier<AuthState> {
   }
 
   void handleSessionExpired() {
+    unawaited(_resetChatState());
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 

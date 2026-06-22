@@ -5,7 +5,7 @@ import 'package:housing_core/housing_core.dart';
 
 import '../../../core/utils/jwt.dart';
 import '../../auth/providers/auth_providers.dart'
-    show databaseProvider, dioProvider;
+    show AuthStatus, authControllerProvider, databaseProvider, dioProvider;
 import '../repository/chat_local_store.dart';
 import '../repository/chat_realtime_service.dart';
 import '../repository/chat_repository.dart';
@@ -22,6 +22,8 @@ final chatLocalStoreProvider = Provider<ChatLocalStore>(
 );
 
 final currentUserIdProvider = FutureProvider<String?>((ref) async {
+  final status = ref.watch(authControllerProvider.select((s) => s.status));
+  if (status != AuthStatus.authenticated) return null;
   final token = await SecureTokenStorage().readAccessToken();
   return decodeJwtSub(token);
 });
@@ -55,6 +57,7 @@ class ActiveChatIdNotifier extends Notifier<int?> {
 }
 
 final chatSessionProvider = Provider.autoDispose<ChatCoordinator>((ref) {
+  ref.watch(currentUserIdProvider);
   final coordinator = ChatCoordinator(
     realtime: ref.watch(chatRealtimeProvider),
     store: ref.watch(chatLocalStoreProvider),

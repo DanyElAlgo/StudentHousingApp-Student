@@ -124,6 +124,12 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get commonClear;
 
+  /// No description provided for @commonRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get commonRefresh;
+
   /// No description provided for @commonOk.
   ///
   /// In en, this message translates to:

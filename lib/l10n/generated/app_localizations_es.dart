@@ -21,6 +21,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonClear => 'Limpiar';
 
   @override
+  String get commonRefresh => 'Actualizar';
+
+  @override
   String get commonOk => 'Aceptar';
 
   @override

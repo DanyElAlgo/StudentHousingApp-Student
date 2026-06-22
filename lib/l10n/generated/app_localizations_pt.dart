@@ -21,6 +21,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get commonClear => 'Limpar';
 
   @override
+  String get commonRefresh => 'Atualizar';
+
+  @override
   String get commonOk => 'OK';
 
   @override
