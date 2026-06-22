@@ -1,5 +1,3 @@
-import '../../../../core/config/app_config.dart';
-
 class RegisterDto {
   const RegisterDto({
     required this.email,
@@ -11,7 +9,7 @@ class RegisterDto {
     required this.gender,
     required this.birthDate,
     this.imageUrl = '',
-    this.role = AppConfig.studentRole,
+    this.role = 'Student',
   });
 
   final String email;

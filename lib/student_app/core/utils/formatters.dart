@@ -1,4 +1,4 @@
-import '../config/app_config.dart';
+import 'package:housing_core/housing_core.dart';
 
 String formatPrice(num value) {
   final String fixed = value.toStringAsFixed(2);
@@ -25,7 +25,7 @@ String resolveImageUrl(String url) {
       trimmed.startsWith('data:')) {
     return trimmed;
   }
-  final String base = AppConfig.apiBaseUrl;
+  final String base = AppConfig.baseUrl;
   final String path = trimmed.startsWith('/') ? trimmed : '/$trimmed';
   return '$base$path';
 }
