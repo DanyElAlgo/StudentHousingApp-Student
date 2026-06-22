@@ -28,7 +28,7 @@ class RoomLocationMap extends StatelessWidget {
             Marker(markerId: const MarkerId('room'), position: position),
           },
           myLocationButtonEnabled: false,
-          zoomControlsEnabled: false,
+          zoomControlsEnabled: true,
           mapToolbarEnabled: false,
           liteModeEnabled: false,
         ),
