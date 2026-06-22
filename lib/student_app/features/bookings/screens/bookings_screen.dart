@@ -19,7 +19,16 @@ class BookingsScreen extends ConsumerWidget {
     );
 
     return AppScaffold(
-      appBar: AppBar(title: Text(l10n.bookingsTitle)),
+      appBar: AppBar(
+        title: Text(l10n.bookingsTitle),
+        actions: [
+          IconButton(
+            tooltip: l10n.commonRefresh,
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(studentBookingsProvider),
+          ),
+        ],
+      ),
       body: CenteredMaxWidth(
         child: RefreshIndicator(
           onRefresh: () => ref.refresh(studentBookingsProvider.future),

@@ -19,7 +19,16 @@ class HomeScreen extends ConsumerWidget {
     final AsyncValue<List<Room>> rooms = ref.watch(featuredRoomsProvider);
 
     return AppScaffold(
-      appBar: AppBar(title: Text(l10n.appTitle)),
+      appBar: AppBar(
+        title: Text(l10n.appTitle),
+        actions: [
+          IconButton(
+            tooltip: l10n.commonRefresh,
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(featuredRoomsProvider),
+          ),
+        ],
+      ),
       body: CenteredMaxWidth(
         child: RefreshIndicator(
           onRefresh: () => ref.refresh(featuredRoomsProvider.future),
