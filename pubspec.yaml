@@ -46,7 +46,7 @@ dependencies:
   housing_design_system:
     git:
       url: https://github.com/rafael1199v/housing-design-system.git
-      ref: release/1.2.0
+      ref: release/1.2.1
 
   # Shared, framework-agnostic plumbing (session, network, storage, roles).
   # The shell consumes student_lib via this same core; for local co-dev the
@@ -54,7 +54,7 @@ dependencies:
   housing_core:
     git:
       url: https://github.com/rafael1199v/housing-core-mobile.git
-      ref: release/1.1.0
+      ref: release/1.1.2
 
 
   dio: ^5.9.2
@@ -73,12 +73,12 @@ dependencies:
 
 # Local co-dev: resolve housing_core from the sibling clone so it can be edited
 # live without pushing. Remove this block to use the pinned git ref above.
-dependency_overrides:
-  housing_core:
-    path: ../housing-core
+# dependency_overrides:
+#   housing_core:
+#     path: ../housing-core
   
-  housing_design_system:
-    path: ../proyecto-final-design-system
+#   housing_design_system:
+#     path: ../proyecto-final-design-system
 
 dev_dependencies:
   flutter_test:
