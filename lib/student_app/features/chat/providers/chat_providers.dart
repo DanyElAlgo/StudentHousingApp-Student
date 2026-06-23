@@ -86,6 +86,7 @@ class ChatCoordinator {
   StreamSubscription<ChatMessage>? _sub;
   StreamSubscription<void>? _reconnectSub;
   String? _userId;
+  bool _disposed = false;
 
   Future<void> start() async {
     _userId = await resolveUserId();
@@ -96,6 +97,7 @@ class ChatCoordinator {
 
   Future<void> _backfill() async {
     await _refreshConversations();
+    if (_disposed) return;
     final chatId = activeChatId();
     if (chatId == null) return;
     try {
@@ -106,8 +108,10 @@ class ChatCoordinator {
 
   Future<void> _onMessage(ChatMessage message) async {
     await store.saveMessages([message]);
+    if (_disposed) return;
 
     final convo = await store.getConversation(message.chatId);
+    if (_disposed) return;
     if (convo == null) {
       await _refreshConversations();
       return;
@@ -134,6 +138,7 @@ class ChatCoordinator {
   }
 
   void dispose() {
+    _disposed = true;
     _sub?.cancel();
     _reconnectSub?.cancel();
   }
