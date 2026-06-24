@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:housing_design_system/housing_design_system.dart';
 import 'package:student_lib/l10n/generated/app_localizations.dart';
 
@@ -18,15 +17,6 @@ import '../widgets/room_location_map.dart';
 import '../widgets/room_policies_section.dart';
 import '../widgets/room_services_section.dart';
 import '../widgets/share_room_button.dart';
-
-Widget? _backToHomeLeading(BuildContext context) {
-  if (context.canPop()) return null;
-  return IconButton(
-    icon: const BackButtonIcon(),
-    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-    onPressed: () => context.go('/home'),
-  );
-}
 
 class RoomDetailsScreen extends ConsumerWidget {
   const RoomDetailsScreen({super.key, required this.roomId});
@@ -65,46 +55,40 @@ class RoomDetailsScreen extends ConsumerWidget {
     final details = ref.watch(roomDetailsProvider(roomId));
     final bool isSubmitting = ref.watch(bookingActionProvider);
 
-    return PopScope(
-      canPop: context.canPop(),
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) context.go('/home');
-      },
-      child: details.when(
-        loading: () => AppScaffold(
-          appBar: AppBar(leading: _backToHomeLeading(context)),
-          body: const Center(child: CircularProgressIndicator()),
-        ),
-        error: (err, _) => AppScaffold(
-          appBar: AppBar(leading: _backToHomeLeading(context)),
-          padded: true,
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.cloud_off_outlined,
-                  size: 48,
-                  color: AppColors.onSurfaceVariant,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text('$err', textAlign: TextAlign.center),
-                const SizedBox(height: AppSpacing.lg),
-                AppSecondaryButton(
-                  label: AppLocalizations.of(context).commonRetry,
-                  icon: Icons.refresh,
-                  onPressed: () => ref.invalidate(roomDetailsProvider(roomId)),
-                ),
-              ],
-            ),
+    return details.when(
+      loading: () => AppScaffold(
+        appBar: AppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, _) => AppScaffold(
+        appBar: AppBar(),
+        padded: true,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.cloud_off_outlined,
+                size: 48,
+                color: AppColors.onSurfaceVariant,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text('$err', textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.lg),
+              AppSecondaryButton(
+                label: AppLocalizations.of(context).commonRetry,
+                icon: Icons.refresh,
+                onPressed: () => ref.invalidate(roomDetailsProvider(roomId)),
+              ),
+            ],
           ),
         ),
-        data: (data) => _DetailsContent(
-          data: data,
-          isSubmitting: isSubmitting,
-          onBook: () => _book(context, ref),
-          onCancel: () => _cancel(context, ref),
-        ),
+      ),
+      data: (data) => _DetailsContent(
+        data: data,
+        isSubmitting: isSubmitting,
+        onBook: () => _book(context, ref),
+        onCancel: () => _cancel(context, ref),
       ),
     );
   }
@@ -159,34 +143,31 @@ class _DetailsContent extends StatelessWidget {
       ],
     );
 
-    final Widget actions = Padding(
-      padding: EdgeInsetsGeometry.directional(bottom: AppSpacing.md),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: ChatWithOwnerButton(
-                  roomId: room.id,
-                  ownerName: room.ownerFullName,
-                  ownerImageUrl: room.imageUrl,
-                ),
+    final Widget actions = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ChatWithOwnerButton(
+                roomId: room.id,
+                ownerName: room.ownerFullName,
+                ownerImageUrl: room.imageUrl,
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: ShareRoomButton(room: room)),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          BookingButton(
-            available: available,
-            hasBooking: data.hasBooking,
-            isSubmitting: isSubmitting,
-            onBook: onBook,
-            onCancel: onCancel,
-          ),
-        ],
-      ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(child: ShareRoomButton(room: room)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        BookingButton(
+          available: available,
+          hasBooking: data.hasBooking,
+          isSubmitting: isSubmitting,
+          onBook: onBook,
+          onCancel: onCancel,
+        ),
+      ],
     );
 
     final List<Widget> sections = [
@@ -213,10 +194,7 @@ class _DetailsContent extends StatelessWidget {
 
     if (!Breakpoints.isCompact(context)) {
       return AppScaffold(
-        appBar: AppBar(
-          leading: _backToHomeLeading(context),
-          title: Text(room.name),
-        ),
+        appBar: AppBar(title: Text(room.name)),
         body: CenteredMaxWidth(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
